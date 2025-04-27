@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->enum('authentication_method',['google','apple_id','username'])->default('username');
+            $table->string('provider_id');
+            $table->string('phone');
+            $table->enum('role',['admin','driver','client'])->default('client');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

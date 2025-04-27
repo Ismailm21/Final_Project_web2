@@ -20,7 +20,12 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'authentication_method',
+        'provider_id',
+        'phone',
         'password',
+        'role',
+        'profile_img_path',
     ];
 
     /**
@@ -44,5 +49,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getAddresses(){
+        return $this->hasOne(Address::class);
     }
 }
