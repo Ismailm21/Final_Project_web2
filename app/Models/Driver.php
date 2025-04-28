@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class driver extends User
+class Driver extends User
 {
     protected $table = 'Users';
     protected static function booted(): void

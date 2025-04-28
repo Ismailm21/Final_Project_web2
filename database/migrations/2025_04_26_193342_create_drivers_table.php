@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
+            $table->foreignId('availability_id')->constrained('availabilities')->onDelete('cascade');
             $table->string('vehicle_type')->default('motorcycle');
             $table->string('vehicle_number')->unique();
             $table->enum('pricing_model',['fixed','perKilometer'])->default('fixed');
