@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 
-class client extends User
+class Client extends User
 {
     protected $table = 'Users';
     protected static function booted(): void
