@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class address extends Model
+class Address extends Model
 {
     protected $fillable = [''];
     public function getUsers(){
