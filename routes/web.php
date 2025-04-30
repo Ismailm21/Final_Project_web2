@@ -20,7 +20,3 @@ Route::post('admin/login', [AdminAuthController::class, 'login'])->name('admin.l
 
 Route::get('admin/signup', [AdminAuthController::class, 'showSignUpForm'])->name('admin.signup');
 Route::post('admin/signup', [AdminAuthController::class, 'signUp'])->name('admin.signup.submit');
-
-Route::get('admin/dashboard', function () {
-    return 'Welcome to the Admin Dashboard';
-})->name('admin.dashboard')->middleware('auth');
