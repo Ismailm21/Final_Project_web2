@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->decimal('amount',10,2)->default(0);
             $table->string('currency')->default('USD');
-            $table->enum('payment_method',['credit_card','wish_money','COD','paypal'])->default('paypal');
+            $table->enum('payment_method',['credit_card','CryptoCurrency','COD','paypal'])->default('paypal');
             $table->string('transaction_id')->nullable();
             $table->enum('status',['pending','paid','failed'])->default('pending');
             $table->timestamps();
