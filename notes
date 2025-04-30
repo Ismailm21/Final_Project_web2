@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg">
+        <div class="p-6 text-2xl font-bold border-b border-gray-200">Admin Panel</div>
+        <nav class="p-4 space-y-4 text-gray-700">
+            <a href="#dashboard" class="flex items-center space-x-2 hover:text-blue-600">
+                <span>📊</span><span>Dashboard</span>
+            </a>
+            <a href="#drivers" class="flex items-center space-x-2 hover:text-blue-600">
+                <span>🚗</span><span>Drivers</span>
+            </a>
+            <a href="#clients" class="flex items-center space-x-2 hover:text-blue-600">
+                <span>👥</span><span>Clients</span>
+            </a>
+            <a href="#addresses" class="flex items-center space-x-2 hover:text-blue-600">
+                <span>📍</span><span>Addresses</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 space-y-8">
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="text-gray-600 text-sm">Used Space</h3>
+                <p class="text-2xl font-bold text-blue-600">49/50 GB</p>
+                <p class="text-xs text-red-500">Get More Space...</p>
+            </div>
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="text-gray-600 text-sm">Revenue</h3>
+                <p class="text-2xl font-bold text-green-600">$34,245</p>
+                <p class="text-xs text-gray-400">Last 24 Hours</p>
+            </div>
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="text-gray-600 text-sm">Fixed Issues</h3>
+                <p class="text-2xl font-bold text-red-600">75</p>
+                <p class="text-xs text-gray-400">Tracked from GitHub</p>
+            </div>
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="text-gray-600 text-sm">Followers</h3>
+                <p class="text-2xl font-bold text-blue-400">+245</p>
+                <p class="text-xs text-gray-400">Just Updated</p>
+            </div>
+        </div>
+
+        <!-- Driver Form -->
+        <section id="drivers">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Add / Edit Driver</h2>
+                <form id="driver-form" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <input type="text" placeholder="Name" class="border p-2 rounded" />
+                    <input type="text" placeholder="License Number" class="border p-2 rounded" />
+                    <input type="text" placeholder="Phone Number" class="border p-2 rounded" />
+                    <button type="submit" class="col-span-2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Save Driver</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Driver Table -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Driver List</h2>
+            <table class="w-full table-auto border text-left">
+                <thead>
+                <tr class="bg-gray-100 text-gray-700">
+                    <th class="border px-4 py-2">ID</th>
+                    <th class="border px-4 py-2">Name</th>
+                    <th class="border px-4 py-2">Phone</th>
+                    <th class="border px-4 py-2">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach ($drivers as $driver)
+                    <tr>
+                        <td class="border px-4 py-2">{{ $driver->id }}</td>
+                        <td class="border px-4 py-2">{{ $driver->name }}</td>
+                        <td class="border px-4 py-2">{{ $driver->phone }}</td>
+                        <td class="border px-4 py-2 space-x-2">
+                            <button class="bg-yellow-400 px-2 py-1 rounded text-white">Edit</button>
+                            <button class="bg-red-600 px-2 py-1 rounded text-white">Delete</button>
+                            <button class="bg-green-600 px-2 py-1 rounded text-white">View</button>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+</body>
+</html>
