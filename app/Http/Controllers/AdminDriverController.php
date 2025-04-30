@@ -59,7 +59,7 @@ class AdminDriverController extends Controller
         $obj = Driver::findOrFail($id);
         $obj->fill($request->all());
         $obj->save();
-        return redirect()->route("myitem.index");
+        return redirect()->route("driverR.index");
 
     }
 
@@ -70,7 +70,7 @@ class AdminDriverController extends Controller
     {
         $obj = Driver::findOrFail($id);
         $obj->delete();
-        return redirect()->route("myitem.index");
+        return redirect()->route("driverR.index");
 
     }
 
