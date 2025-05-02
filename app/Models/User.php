@@ -12,6 +12,12 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class); // One user can be a driver
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -21,7 +27,6 @@ class User extends Authenticatable
         'name',
         'email',
         'authentication_method',
-        'provider_id',
         'phone',
         'password',
         'role',
@@ -54,4 +59,11 @@ class User extends Authenticatable
     public function getAddresses(){
         return $this->hasOne(Address::class);
     }
+
+    // User.php
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
+
 }
