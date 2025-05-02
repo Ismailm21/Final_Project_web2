@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('areas', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
+        Schema::create('driver_availability', function (Blueprint $table) {
+            $table->foreignId('driver_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('availability_id')->constrained()->cascadeOnDelete();
+            $table->primary(['driver_id', 'availability_id']);
         });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('areas');
+        Schema::dropIfExists('driver_availabilities');
     }
 };
