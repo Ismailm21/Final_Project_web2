@@ -21,19 +21,25 @@ class AdminAuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 'admin'])) {
+        if (Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+            'role' => 'admin'
+        ])) {
             return redirect()->route('admin.dashboard');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials or not an admin.']);
     }
 
-    public function showSignUpForm()
-    {
-        return view('Signup-Admin');
-    }
+    // ✅ REMOVE public signup route and form
+    // public function showSignUpForm()
+    // {
+    //     return view('Signup-Admin');
+    // }
 
-    public function signUp(Request $request)
+    // ✅ Moved to admin dashboard only
+    public function storeDriver(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -42,17 +48,16 @@ class AdminAuthController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'role' => 'admin',
-            'provider_id' => 'manual', 
+            'role' => 'driver',
             'authentication_method' => 'username',
+            'provider_id' => 'manual',
         ]);
 
-        Auth::login($user);
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('admin.driver')->with('success', 'Driver created successfully.');
     }
 }

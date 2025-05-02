@@ -70,4 +70,25 @@ class DriverAuthController extends Controller
         return redirect()->route('driver.dashboard');
     }
 
+    public function storeDriver(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:15',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'driver',
+            'authentication_method' => 'username',
+        ]);
+
+        return redirect()->route('admin.driver')->with('success', 'Driver added successfully.');
+    }
+
 }
