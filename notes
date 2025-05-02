@@ -3,43 +3,36 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
+    <title>@yield('title', 'Admin Dashboard')</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
+    <style>
+        #map-container {
+            height: 300px;
+            width: 100%;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        .pac-container {
+            z-index: 1050 !important;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans">
 <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-lg">
-        <div class="p-6 text-2xl font-bold border-b border-gray-200">Admin Panel</div>
-        <nav class="p-4 space-y-4 text-gray-700">
-            <a href="#dashboard" class="flex items-center space-x-2 hover:text-blue-600">
-                <span>📊</span><span>Dashboard</span>
-            </a>
-            <a href="#drivers" class="flex items-center space-x-2 hover:text-blue-600">
-                <span>🚗</span><span>Drivers</span>
-            </a>
-            <a href="#clients" class="flex items-center space-x-2 hover:text-blue-600">
-                <span>👥</span><span>Clients</span>
-            </a>
-            <a href="#addresses" class="flex items-center space-x-2 hover:text-blue-600">
-                <span>📍</span><span>Addresses</span>
-            </a>
-        </nav>
-    </aside>
 
-    <!-- Main Content -->
+    @include('layouts.sidebar')
+
     <main class="flex-1 p-6 space-y-8">
         <!-- Stat Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Used Space</h3>
-                <p class="text-2xl font-bold text-blue-600">49/50 GB</p>
-                <p class="text-xs text-red-500">Get More Space...</p>
-            </div>
-            <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Revenue</h3>
+                <h3 class="text-gray-600 text-sm">Total Revenue</h3>
                 <p class="text-2xl font-bold text-green-600">$34,245</p>
-                <p class="text-xs text-gray-400">Last 24 Hours</p>
+                <p class="text-xs text-gray-400">Not bad</p>
             </div>
             <div class="bg-white rounded-xl shadow p-6">
                 <h3 class="text-gray-600 text-sm">Fixed Issues</h3>
@@ -47,54 +40,122 @@
                 <p class="text-xs text-gray-400">Tracked from GitHub</p>
             </div>
             <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Followers</h3>
+                <h3 class="text-gray-600 text-sm">Available Drivers</h3>
                 <p class="text-2xl font-bold text-blue-400">+245</p>
                 <p class="text-xs text-gray-400">Just Updated</p>
             </div>
         </div>
 
-        <!-- Driver Form -->
-        <section id="drivers">
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-4">Add / Edit Driver</h2>
-                <form id="driver-form" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <input type="text" placeholder="Name" class="border p-2 rounded" />
-                    <input type="text" placeholder="License Number" class="border p-2 rounded" />
-                    <input type="text" placeholder="Phone Number" class="border p-2 rounded" />
-                    <button type="submit" class="col-span-2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Save Driver</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- Driver Table -->
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4">Driver List</h2>
-            <table class="w-full table-auto border text-left">
-                <thead>
-                <tr class="bg-gray-100 text-gray-700">
-                    <th class="border px-4 py-2">ID</th>
-                    <th class="border px-4 py-2">Name</th>
-                    <th class="border px-4 py-2">Phone</th>
-                    <th class="border px-4 py-2">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($drivers as $driver)
-                    <tr>
-                        <td class="border px-4 py-2">{{ $driver->id }}</td>
-                        <td class="border px-4 py-2">{{ $driver->name }}</td>
-                        <td class="border px-4 py-2">{{ $driver->phone }}</td>
-                        <td class="border px-4 py-2 space-x-2">
-                            <button class="bg-yellow-400 px-2 py-1 rounded text-white">Edit</button>
-                            <button class="bg-red-600 px-2 py-1 rounded text-white">Delete</button>
-                            <button class="bg-green-600 px-2 py-1 rounded text-white">View</button>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
+        <main class="flex-1 p-6 space-y-8">
+            @yield('content')
+        </main>
     </main>
 </div>
+
+<!-- Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCg0hy8YfWY7LzfDyId8dd1e3FplF3msAY&libraries=places&callback=initMap" async defer></script>
+
+<script>
+    let map;
+    let marker;
+    let autocomplete;
+
+    function initMap() {
+        // Initialize map centered on Lebanon
+        map = new google.maps.Map(document.getElementById('map-container'), {
+            center: { lat: 33.8938, lng: 35.5018 },
+            zoom: 12,
+            mapTypeControl: false,
+            streetViewControl: false
+        });
+
+        // Initialize autocomplete
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('address-search'),
+            { types: ['geocode'], fields: ['address_components', 'geometry'] }
+        );
+
+        // Add click listener for map
+        map.addListener('click', (e) => {
+            placeMarker(e.latLng);
+            reverseGeocode(e.latLng);
+        });
+
+        // Handle address selection
+        autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) {
+                alert("No details available for this address");
+                return;
+            }
+
+            placeMarker(place.geometry.location);
+            fillAddressComponents(place);
+            map.panTo(place.geometry.location);
+            map.setZoom(15);
+        });
+    }
+
+    function placeMarker(location) {
+        if (marker) marker.setMap(null);
+        marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            draggable: true
+        });
+
+        marker.addListener('dragend', () => {
+            reverseGeocode(marker.getPosition());
+        });
+    }
+
+    function reverseGeocode(latLng) {
+        new google.maps.Geocoder().geocode({ location: latLng }, (results, status) => {
+            if (status === "OK" && results[0]) {
+                document.getElementById('address-search').value = results[0].formatted_address;
+                fillAddressComponents(results[0]);
+            }
+        });
+    }
+
+    function fillAddressComponents(place) {
+        const components = {
+            street: '',
+            city: '',
+            state: '',
+            postal_code: '',
+            country: 'Lebanon'
+        };
+
+        place.address_components.forEach(component => {
+            const type = component.types[0];
+            if (type === "route") components.street = component.long_name;
+            if (type === "locality") components.city = component.long_name;
+            if (type === "administrative_area_level_1") components.state = component.short_name;
+            if (type === "postal_code") components.postal_code = component.long_name;
+            if (type === "country") components.country = component.long_name;
+        });
+
+        // Update form fields
+        Object.keys(components).forEach(key => {
+            const field = document.getElementById(key);
+            if (field) field.value = components[key];
+        });
+
+        // Update coordinates
+        document.getElementById('latitude').value = place.geometry.location.lat();
+        document.getElementById('longitude').value = place.geometry.location.lng();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Prevent form submission when hitting enter in address search
+        const addressSearch = document.getElementById('address-search');
+        if (addressSearch) {
+            addressSearch.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') e.preventDefault();
+            });
+        }
+    });
+</script>
 </body>
 </html>
