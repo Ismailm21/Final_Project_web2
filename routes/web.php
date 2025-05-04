@@ -13,5 +13,6 @@ Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name(
 Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
 Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('admin.save');
 Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
+Route::get('admin/show_requests', [AdminController::class, 'showRequests'])->name('admin.showRequests');
 
-Route::resource('driver', AdminDriverController::class);
+Route::resource('driverR', AdminDriverController::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\driver_availability;
+use App\Models\PendingDriver;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\Area;
@@ -20,11 +21,15 @@ class AdminController extends Controller
     }
     public function listDrivers()
     {
-        $drivers = Driver::all();
-        return view('admin.driver',compact('drivers'));
+        $drivers = User::where('role', 'driver')->get();
+        return view('admin.driver', compact('drivers'));
     }
     public function viewForm(){
         return view('admin.addDriver');
+    }
+    public function showRequests(){
+        $pending_drivers = PendingDriver::all(); // Fetch all pending drivers
+        return view('admin.driverRequests', compact('pending_drivers'));
     }
     public function addDriver(Request $request)
     {
@@ -38,6 +43,7 @@ class AdminController extends Controller
             // Driver fields
             'vehicle_type' => 'required|string',
             'vehicle_number' => 'required|string|unique:drivers,vehicle_number',
+            'license' => 'required|string|unique:drivers,license',
             'pricing_model' => 'required|in:fixed,perKilometer',
             'price' => 'required|numeric|min:0',
 
@@ -66,6 +72,7 @@ class AdminController extends Controller
             $driver->area_id = $area->id;
             $driver->vehicle_type = $validated['vehicle_type'];
             $driver->vehicle_number = $validated['vehicle_number'];
+            $driver->license = $validated['license'];
             $driver->pricing_model = $validated['pricing_model'];
             $driver->fixed_rate = ($validated['pricing_model'] === 'fixed') ? $validated['price'] : null;
             $driver->rate_per_km = ($validated['pricing_model'] === 'perKilometer') ? $validated['price'] : null;
@@ -93,11 +100,6 @@ class AdminController extends Controller
                     }
                 }
             }
-
-
-
-
-
 
             return response()->json([
                 'success' => true,
@@ -153,6 +155,8 @@ class AdminController extends Controller
         $driver = User::where('role', 'driver')->get();
         return $driver;
     }
+
+
     public function setLoyaltyRules(Request $request){
 
     }

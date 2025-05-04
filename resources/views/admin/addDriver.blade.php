@@ -98,6 +98,13 @@
                 </div>
 
                 <input type="text"
+                       value="{{ old('license') }}"
+                       name="license"
+                       placeholder="license"
+                       class="col-span-2 border p-2 rounded @error('license') border-red-500 @enderror"/>
+                @error('license') <div class="text-red-600">{{ $message }}</div> @enderror
+
+                <input type="text"
                        value="{{ old('vehicle_type') }}"
                        name="vehicle_type"
                        placeholder="Vehicle Type"
