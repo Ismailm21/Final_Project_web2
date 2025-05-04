@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('availabilities', function (Blueprint $table) {
+        Schema::create('loyalty_points', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
-            $table->time('start_time');
-            $table->time('end_time');
-            $table->enum('status',['available','busy'])->default('available');
+            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade'); // Changed: now points reference client
+            $table->integer('points')->unsigned();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('availabilities');
+        Schema::dropIfExists('loyalty_points');
     }
 };

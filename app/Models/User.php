@@ -18,14 +18,35 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'authentication_method',
-        'phone',
-        'password',
-        'role',
-        'profile_img_path',
+        'user_id', 'area_id', 'vehicle_type', 'vehicle_number',
+        'pricing_model', 'rate_per_km', 'fixed_rate', 'rating'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    public function availabilities()
+    {
+        return $this->belongsToMany(Availability::class, 'driver_availability')
+            ->withTimestamps();
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function addresses()
+    {
+        return $this->morphMany(Address::class, 'addressable');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -48,9 +69,5 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function getAddresses(){
-        return $this->hasOne(Address::class);
     }
 }

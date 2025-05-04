@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Address;
+use App\Models\driver_availability;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Models\Area;
 use App\Models\Availability;
+use App\Models\Client;
 use App\Models\Driver;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -27,79 +29,87 @@ class AdminController extends Controller
     public function addDriver(Request $request)
     {
         $validated = $request->validate([
+            // User fields
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
-            'area' => 'required|string', // This is the area name to be created
-            'address_type' => 'required|in:home,work,other',
+            'phone' => 'required|string|max:20',
+
+            // Driver fields
             'vehicle_type' => 'required|string',
-            'vehicle_number' => 'required|string',
+            'vehicle_number' => 'required|string|unique:drivers,vehicle_number',
+            'pricing_model' => 'required|in:fixed,perKilometer',
             'price' => 'required|numeric|min:0',
-            'pricing_model' => 'required|in:fixed,per_km'
+
+            // Area field
+            'area' => 'required|string'
         ]);
 
         try {
-            $area = Area::firstOrCreate([
-                'name' => $validated['area']
-            ]);
+            // 1. Create User
 
-            $address = Address::firstOrCreate([
-                'street' => $request['street'],
-                'city' => $request['city'],
-                'state' => $request['state'],
-                'country' => $request['country'],
-                'type' => $validated['address_type'],
-                'PostalCode' => $request['postal_code'],
-                'latitude' => $request['latitude'],
-                'longitude' => $request['longitude'],
-            ]);
-
-            $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'role' => 'driver',
-                'address_id' => $address->id
-            ]);
+            $user = new User();
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->password = Hash::make($validated['password']);
+            $user->phone = $validated['phone'];
+            $user->role = 'driver';
+            $user->save();
 
 
-            $driver = $user->driver()->create([
-                'phone' => $validated['phone'],
-                'area_id' => $area->id,
-                'vehicle_type' => $validated['vehicle_type'],
-                'vehicle_number' => $validated['vehicle_number'],
-                'price' => $validated['price'],
-                'pricing_model' => $validated['pricing_model'],
-                'availabilities' => 'sometimes|array',
-                'availabilities.*.day' => 'required_with:availabilities|in:monday,tuesday,wednesday,thursday,friday',
-                'availabilities.*.start_time' => 'required_with:availabilities|date_format:H:i',
-                'availabilities.*.end_time' => 'required_with:availabilities|date_format:H:i|after:availabilities.*.start_time'
-            ]);
+            $area = new Area();
+            $area->name = $validated['area'];
+            $area->save();
+
+            $driver = new Driver();
+            $driver->user_id = $user->id;
+            $driver->area_id = $area->id;
+            $driver->vehicle_type = $validated['vehicle_type'];
+            $driver->vehicle_number = $validated['vehicle_number'];
+            $driver->pricing_model = $validated['pricing_model'];
+            $driver->fixed_rate = ($validated['pricing_model'] === 'fixed') ? $validated['price'] : null;
+            $driver->rate_per_km = ($validated['pricing_model'] === 'perKilometer') ? $validated['price'] : null;
+            $driver->save();
+
 
             if ($request->has('availabilities')) {
-                foreach ($request->availabilities as $availabilityData) {
-                    $availability = Availability::create([
-                        'day' => $availabilityData['day'],
-                        'start_time' => $availabilityData['start_time'],
-                        'end_time' => $availabilityData['end_time'],
-                        'status' => 'available'
-                    ]);
+                foreach ($request->input('availabilities', []) as $day => $data) {
+                    // Must be checked *and* have both times (validation ensures this)
+                    if (!empty($data['active'])) {
+                        // Create the availability row
+                        $availability = Availability::create([
+                            'day' => ucfirst($day),
+                            'start_time' => $data['start_time'],
+                            'end_time' => $data['end_time'],
+                            'status' => 'available',
+                        ]);
 
-                    $driver->availabilities()->attach($availability->id);
+                        // Link it to the driver via the pivot
+                        DB::table('driver_availabilities')->insert([
+                            'driver_id' => $driver->id,
+                            'availability_id' => $availability->id,
+
+                        ]);
+                    }
                 }
             }
+
+
+
+
+
 
             return response()->json([
                 'success' => true,
                 'message' => 'Driver added successfully',
                 'data' => [
-                    'driver' => $driver,
-                    'availabilities' => $driver->availabilities
+                    'user' => $user,
+                    'driver' => $driver
                 ]
-            ], 201);
+            ]);
 
         } catch (\Exception $e) {
+            //DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to add driver',
@@ -107,6 +117,37 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    public function signUp(Request $request){
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'loyalty_points_id' => 'nullable|exists:loyalty_points,id',
+            'Achievements' => 'required|in:Bronze,Silver,Gold,Platinum',
+        ]);
+        $user = new User();
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->password = Hash::make($validated['password']);
+        $user->role = 'client';
+        $user->otp_expires_at = now()->addMinutes(5);
+
+        // expires in 5 minutes
+        $user->is_verified = false;
+        $user->save();
+
+        // Create the Client record
+        $client = new Client();
+        $client->user_id = $user->id;
+
+        // Associate with the created user
+        $client->loyalty_points_id = $validated['loyalty_points_id'] ?? null;
+        $client->Achievements = $validated['Achievements'];
+        $client->save();
+    }
+
+
     public function showDrivers($id)
     {
         $driver = User::where('role', 'driver')->get();

@@ -6,11 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    public function getClient(){
-        return $this->hasOne(Client::class,'client_id','id');
+    protected $fillable = ['client_id', 'order_id', 'rating', 'review'];
 
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
     }
-    public function getOrders(){
-        return $this->hasOne(Order::class,'order_id','id');
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }
