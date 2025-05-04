@@ -1,161 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@yield('title', 'Admin Dashboard')</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="icon" href="{{ asset('images/logo.png') }}">
-    <style>
-        #map-container {
-            height: 300px;
-            width: 100%;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-            border: 1px solid #e2e8f0;
-        }
-        .pac-container {
-            z-index: 1050 !important;
-        }
-    </style>
-</head>
-<body class="bg-gray-100 font-sans">
-<div class="flex min-h-screen">
+public function signUp(Request $request){
+  $validated = $request->validate([
+    'name' => 'required|string|max:255',
+    'email' => 'required|email|unique:users,email',
+    'password' => 'required|string|min:8|confirmed',
+    'loyalty_points_id' => 'nullable|exists:loyalty_points,id',
+    'Achievements' => 'required|in:Bronze,Silver,Gold,Platinum',
+  )]);
+  $user = new User();
+  $user->name = $validated['name'];
+  $user->email = $validated['email'];
+  $otp = rand(100000, 999999);
+  $user->password = Hash::make($validated['password']);
+  $user->role = 'client';
+  $user->otp_code = $otp;
+  $user->otp_expires_at = now()->addMinutes(5);
 
-    @include('layouts.sidebar')
+  // expires in 5 minutes
+  $user->is_verified = false;
+  $user->save();
 
-    <main class="flex-1 p-6 space-y-8">
-        <!-- Stat Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Total Revenue</h3>
-                <p class="text-2xl font-bold text-green-600">$34,245</p>
-                <p class="text-xs text-gray-400">Not bad</p>
-            </div>
-            <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Fixed Issues</h3>
-                <p class="text-2xl font-bold text-red-600">75</p>
-                <p class="text-xs text-gray-400">Tracked from GitHub</p>
-            </div>
-            <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Available Drivers</h3>
-                <p class="text-2xl font-bold text-blue-400">+245</p>
-                <p class="text-xs text-gray-400">Just Updated</p>
-            </div>
-        </div>
+  // Create the Client record
+  $client = new Client();
+  $client->user_id = $user->id;
 
-        <main class="flex-1 p-6 space-y-8">
-            @yield('content')
-        </main>
-    </main>
-</div>
+  // Associate with the created user
+  $client->loyalty_points_id = $validated['loyalty_points_id'] ?? null;
+  $client->Achievements = $validated['Achievements'];
+  $client->save();
+  session(['otp_code' => $otp, 'user_id' => $client->id]);
+  Mail::to($client->email)->send(new OtpMail($otp));
 
-<!-- Google Maps API -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCg0hy8YfWY7LzfDyId8dd1e3FplF3msAY&libraries=places&callback=initMap" async defer></script>
+  // Flash a success message
+  session()->flash('success', 'You have successfully signed up as a client!');
 
-<script>
-    let map;
-    let marker;
-    let autocomplete;
+  // Log the user in
+  auth()->login($user);
 
-    function initMap() {
-        // Initialize map centered on Lebanon
-        map = new google.maps.Map(document.getElementById('map-container'), {
-            center: { lat: 33.8938, lng: 35.5018 },
-            zoom: 12,
-            mapTypeControl: false,
-            streetViewControl: false
-        });
+  // TODO: Send OTP via SMS or Email — here, we just simulate it    logger("OTP for user {$user->email} is {$otp}");
+  // Redirect to OTP verification view
+  2
+  return redirect()->route('otp.verify.form')->with('user_id', $user->id);
 
-        // Initialize autocomplete
-        autocomplete = new google.maps.places.Autocomplete(
-            document.getElementById('address-search'),
-            { types: ['geocode'], fields: ['address_components', 'geometry'] }
-        );
 
-        // Add click listener for map
-        map.addListener('click', (e) => {
-            placeMarker(e.latLng);
-            reverseGeocode(e.latLng);
-        });
+            'street' => 'required|string',
+            'city' => 'required|string',
+            'postal_code' => 'required|string',
+            'address_type' => 'required|in:home,work,other',
 
-        // Handle address selection
-        autocomplete.addListener('place_changed', () => {
-            const place = autocomplete.getPlace();
-            if (!place.geometry) {
-                alert("No details available for this address");
-                return;
-            }
 
-            placeMarker(place.geometry.location);
-            fillAddressComponents(place);
-            map.panTo(place.geometry.location);
-            map.setZoom(15);
-        });
-    }
 
-    function placeMarker(location) {
-        if (marker) marker.setMap(null);
-        marker = new google.maps.Marker({
-            position: location,
-            map: map,
-            draggable: true
-        });
-
-        marker.addListener('dragend', () => {
-            reverseGeocode(marker.getPosition());
-        });
-    }
-
-    function reverseGeocode(latLng) {
-        new google.maps.Geocoder().geocode({ location: latLng }, (results, status) => {
-            if (status === "OK" && results[0]) {
-                document.getElementById('address-search').value = results[0].formatted_address;
-                fillAddressComponents(results[0]);
-            }
-        });
-    }
-
-    function fillAddressComponents(place) {
-        const components = {
-            street: '',
-            city: '',
-            state: '',
-            postal_code: '',
-            country: 'Lebanon'
-        };
-
-        place.address_components.forEach(component => {
-            const type = component.types[0];
-            if (type === "route") components.street = component.long_name;
-            if (type === "locality") components.city = component.long_name;
-            if (type === "administrative_area_level_1") components.state = component.short_name;
-            if (type === "postal_code") components.postal_code = component.long_name;
-            if (type === "country") components.country = component.long_name;
-        });
-
-        // Update form fields
-        Object.keys(components).forEach(key => {
-            const field = document.getElementById(key);
-            if (field) field.value = components[key];
-        });
-
-        // Update coordinates
-        document.getElementById('latitude').value = place.geometry.location.lat();
-        document.getElementById('longitude').value = place.geometry.location.lng();
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // Prevent form submission when hitting enter in address search
-        const addressSearch = document.getElementById('address-search');
-        if (addressSearch) {
-            addressSearch.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') e.preventDefault();
-            });
-        }
-    });
-</script>
-</body>
-</html>
+$address = new Address();
+            $address->street = $validated['street'];
+            $address->city = request('city');
+            $address->state = request('state');
+            $address->PostalCode = $validated['postal_code'];
+            $address->type = request('address_type');
+            $address->longitude  = request('longitude');
+            $address->latitude = request('latitude');
+            $address->save();
