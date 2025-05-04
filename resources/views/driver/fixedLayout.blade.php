@@ -36,11 +36,11 @@
         <div class="p-6 text-2xl font-bold border-b border-gray-200">Hello Driver</div>
         <nav class="p-4 space-y-4 text-gray-700">
 
-            <a href="{{route("driverMenu")}}" class="flex items-center space-x-2 hover:text-blue-600">
+            <a href="{{route("driver.Menu")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-home"></i><span>Home</span>
             </a>
 
-            <a href="{{route("myProfile")}}" class="flex items-center space-x-2 hover:text-blue-600">
+            <a href="{{route("driver.myProfile")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-user"></i><span>My Profile</span>
             </a>
             <a href="" class="flex items-center space-x-2 hover:text-blue-600">
@@ -53,21 +53,21 @@
                     <i class="fas fa-chevron-down ml-2 transition-transform duration-200" id="orderIcon"></i>
                 </button>
                 <div id="ordersDropdown" class="dropdown-menu pl-6 mt-2">
-                    <a href="{{route("inProcessOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
+                    <a href="{{route("driver.inProcessOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
                         <i class="fas fa-spinner mr-2"></i>Processing
                     </a>
-                    <a href="{{route("completedOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
+                    <a href="{{route("driver.completedOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
                         <i class="fas fa-check mr-2"></i>Completed
                     </a>
-                    <a href="{{route("cancelledOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
+                    <a href="{{route("driver.cancelledOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
                         <i class="fas fa-times mr-2"></i>Cancelled
                     </a>
                 </div>
             </div>
-            <a href="{{route("manageAvailability")}}" class="flex items-center space-x-2 hover:text-blue-600">
+            <a href="{{route("driver.manageAvailability")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-clock"></i><span>Manage Availability</span>
             </a>
-            <a href="{{route("AreaAndPricing")}}" class="flex items-center space-x-2 hover:text-blue-600">
+            <a href="{{route("driver.AreaAndPricing")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-map-marker-alt"></i><span>Edit Delivery Area</span>
             </a>
             <a href="" class="flex items-center space-x-2 hover:text-blue-600">
