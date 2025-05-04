@@ -5,6 +5,8 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
+    <!-- resources/views/admin.blade.php -->
+
     <section id="drivers">
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-semibold mb-4">Add / Edit Driver</h2>
@@ -42,7 +44,7 @@
                            class="border w-full p-2 rounded invalid:border-red-500 @error('password') is-invalid @enderror">
                     <i class="bi bi-eye-slash-fill absolute right-3 top-3 cursor-pointer text-gray-600"
                        onclick="togglePassword('password', this)"></i>
-                    @error('d_pass')
+                    @error('password')
                     <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                     @enderror
                 </div>
@@ -53,89 +55,12 @@
                            id="confirm_password"
                            placeholder="Confirm Password"
                            class="border w-full p-2 rounded invalid:border-red-500">
+                    @error('password_confirmation')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                    @enderror
                     <i class="bi bi-eye-slash-fill absolute right-3 top-3 cursor-pointer text-gray-600"
                        onclick="togglePassword('confirm_password', this)"></i>
                 </div>
-
-                <!-- In your form -->
-                <input type="text" id="address-search" placeholder="Search address or click on map">
-                <div id="map-container"></div>
-
-                <!-- Hidden fields -->
-                <div class="d-flex gap-4 justify-content-start">
-                    <label class="block text-gray-700 mb-2">Address Type</label>
-                    <div class="d-flex justify-content gap-6">
-                        <!-- Home -->
-                        <label class="inline-flex items-center">
-                            <input type="radio" name="address_type" value="home"
-                                   class="form-radio h-4 w-4 text-blue-600">
-                            <span class="ml-2">Home</span>
-                        </label>
-                        <!-- Work -->
-                        <label class="inline-flex items-center">
-                            <input type="radio" name="address_type" value="work"
-                                   class="form-radio h-4 w-4 text-blue-600">
-                            <span class="ml-2">Work</span>
-                        </label>
-                        <!-- Other -->
-                        <label class="inline-flex items-center">
-                            <input type="radio" name="address_type" value="other" checked
-                                   class="form-radio h-4 w-4 text-blue-600">
-                            <span class="ml-2">Other</span>
-                        </label>
-                    </div>
-                </div><fieldset class="col-span-2 border border-gray-300 rounded p-4">
-                    <legend class="text-sm font-semibold text-gray-600 mb-2">Auto-Filled Address Info</legend>
-
-                    <input type="text"
-                           id="street"
-                           name="street"
-                           value="{{old('street')}}"
-                           placeholder="Street"
-                           class="w-full mb-2 border p-2 rounded bg-gray-100 text-gray-600 cursor-not-allowed">
-
-                    <input type="hidden"
-                           id="city"
-                           name="city"
-                           readonly
-                           placeholder="City"
-                           class="w-full mb-2 border p-2 rounded bg-gray-100 text-gray-600 cursor-not-allowed">
-
-                    <input type="hidden"
-                           id="state"
-                           name="state"
-                           readonly
-                           placeholder="State"
-                           class="w-full mb-2 border p-2 rounded bg-gray-100 text-gray-600 cursor-not-allowed">
-
-                    <input type="text"
-                           id="postal_code"
-                           name="postal_code"
-                           value="{{old("postal_code")}}"
-                           placeholder="Postal Code"
-                           class="w-full mb-2 border p-2 rounded bg-gray-100 text-gray-600 cursor-not-allowed">
-
-                    <input type="hidden"
-                           id="country"
-                           name="country"
-                           readonly
-                           placeholder="Country"
-                           class="w-full mb-2 border p-2 rounded bg-gray-100 text-gray-600 cursor-not-allowed">
-
-                    <input type="hidden"
-                           id="latitude"
-                           name="latitude"
-                           readonly
-                           placeholder="Latitude"
-                           class="w-full mb-2 border p-2 rounded bg-gray-100 text-gray-600 cursor-not-allowed">
-
-                    <input type="hidden"
-                           id="longitude"
-                           name="longitude"
-                           readonly
-                           placeholder="Longitude"
-                           class="w-full border p-2 rounded bg-gray-100 text-gray-600 cursor-not-allowed">
-                </fieldset>
 
                 <input type="text"
                        value="{{ old('area') }}"
@@ -152,6 +77,7 @@
                             <!-- Checkbox -->
                             <input type="checkbox"
                                    name="availabilities[{{ strtolower($day) }}][active]"
+                                   value="1"
                                    id="available_{{ strtolower($day) }}"
                                    class="h-4 w-4 text-blue-600 rounded">
 
@@ -197,7 +123,7 @@
                                value="{{ old('price') }}">
                         <select name="pricing_model" class="form-select" style="max-width: 120px;">
                             <option value="fixed" {{ old('pricing_model') == 'fixed' ? 'selected' : '' }}>Fixed</option>
-                            <option value="per_km" {{ old('pricing_model') == 'per_km' ? 'selected' : '' }}>Per km</option>
+                            <option value="perKilometer" {{ old('pricing_model') == 'per_km' ? 'selected' : '' }}>Per km</option>
                         </select>
                     </div>
                     @error('price') <div class="text-red-600">{{ $message }}</div> @enderror
@@ -219,4 +145,5 @@
             iconElement.classList.toggle('bi-eye-fill');
         }
     </script>
+
 @endsection

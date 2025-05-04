@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Added: Link to users table
             $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
-            $table->foreignId('availability_id')->constrained('availabilities')->onDelete('cascade');
             $table->string('vehicle_type')->default('motorcycle');
             $table->string('vehicle_number')->unique();
-            $table->enum('pricing_model',['fixed','perKilometer'])->default('fixed');
-            $table->decimal('rate_per_km',10,2)->nullable();
-            $table->decimal('fixed_rate',10,2)->nullable();
-            $table->decimal('rating',3,2)->default('0');
+            $table->enum('pricing_model', ['fixed', 'perKilometer'])->default('fixed');
+            $table->decimal('rate_per_km', 10, 2)->nullable();
+            $table->decimal('fixed_rate', 10, 2)->nullable();
+            $table->decimal('rating', 3, 2)->default('0');
             $table->timestamps();
         });
     }
