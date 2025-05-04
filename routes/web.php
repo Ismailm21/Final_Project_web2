@@ -15,3 +15,18 @@ Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('
 Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
 
 Route::resource('driver', AdminDriverController::class);
+
+
+
+
+
+
+/*DRIVER JULIEN*/
+use App\Http\Controllers\DriverMenuController;
+Route::get('driverMenu', [DriverMenuController::class, 'index'])->name('driverMenu');
+Route::get('myProfile', [DriverMenuController::class, 'myProfile'])->name('myProfile');
+Route::get('inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('inProcessOrders');
+Route::get('completedOrders', [DriverMenuController::class, 'completedOrders'])->name('completedOrders');
+Route::get('cancelledOrders', [DriverMenuController::class, 'cancelledOrders'])->name('cancelledOrders');
+Route::get('manageAvailability', [DriverMenuController::class, 'manageAvailability'])->name('manageAvailability');
+Route::get('AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('AreaAndPricing');
