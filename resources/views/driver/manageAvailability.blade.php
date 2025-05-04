@@ -1,0 +1,75 @@
+@extends('driver.fixedLayout')
+
+@section('title', 'Manage Availability')
+
+@section('page_title', 'Edit your availability')
+
+@section('page-content')
+    <div class="space-y-6">
+        <form id="driver-form" action="{{--route('')--}}" method="POST" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <!-- Weekly Availability Section -->
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-medium mb-4">Weekly Availability</h3>
+                
+                @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as $day)
+                    <div class="flex items-center mb-4 space-x-4">
+                        <div class="flex items-center w-40">
+                            <input type="checkbox"
+                                   name="availabilities[{{ $day }}][active]"
+                                   value="1"
+                                   id="available_{{ $day }}"
+                                   {{--old("availabilities.{$day}.active", $availability->{$day.'_active'} ?? '') ? 'checked' : ''--}}
+                                   class="h-4 w-4 text-blue-600 rounded">
+                            <label for="available_{{ $day }}" class="ml-2 capitalize">{{ $day }}</label>
+                        </div>
+
+                        <div class="flex items-center space-x-2 flex-1">
+                            <input type="time"
+                                   name="availabilities[{{ $day }}][start_time]"
+                                   value="{{--old("availabilities.{$day}.start_time", $availability->{$day.'_start'} ?? '')--}}"
+                                   class="border rounded p-2 w-32"
+                                   {{ old("availabilities.{$day}.active", $availability->{$day.'_active'} ?? '') ? '' : 'disabled' }}>
+                            <span class="text-gray-500">to</span>
+                            <input type="time"
+                                   name="availabilities[{{ $day }}][end_time]"
+                                   value="{{--old("availabilities.{$day}.end_time", $availability->{$day.'_end'} ?? '')--}}"
+                                   class="border rounded p-2 w-32"
+                                   {{--old("availabilities.{$day}.active", $availability->{$day.'_active'} ?? '') ? '' : 'disabled'--}}>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                Update Settings
+            </button>
+        </form>
+
+        @if ($errors->any())
+            <div class="bg-red-50 text-red-500 p-4 rounded-lg">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+    </div>
+
+    <script>
+        // Enable/disable time inputs based on checkbox state
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const day = this.id.replace('available_', '');
+                const timeInputs = document.querySelectorAll(`input[name^="availabilities[${day}]"][type="time"]`);
+                timeInputs.forEach(input => {
+                    input.disabled = !this.checked;
+                });
+            });
+        });
+    </script>
+@endsection
