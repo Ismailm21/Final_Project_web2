@@ -14,19 +14,15 @@ Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('adm
 Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('admin.save');
 Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
 
-Route::resource('driver', AdminDriverController::class);
 
 
-
-
-
-
-/*DRIVER JULIEN*/
+/*-----------------------------------------DRIVER JULIEN--------------------------------------------*/
 use App\Http\Controllers\DriverMenuController;
-Route::get('driverMenu', [DriverMenuController::class, 'index'])->name('driverMenu');
-Route::get('myProfile', [DriverMenuController::class, 'myProfile'])->name('myProfile');
-Route::get('inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('inProcessOrders');
-Route::get('completedOrders', [DriverMenuController::class, 'completedOrders'])->name('completedOrders');
-Route::get('cancelledOrders', [DriverMenuController::class, 'cancelledOrders'])->name('cancelledOrders');
-Route::get('manageAvailability', [DriverMenuController::class, 'manageAvailability'])->name('manageAvailability');
-Route::get('AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('AreaAndPricing');
+Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
+Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
+Route::get('driver/inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('driver.inProcessOrders');
+Route::get('driver/completedOrders', [DriverMenuController::class, 'completedOrders'])->name('driver.completedOrders');
+Route::get('driver/cancelledOrders', [DriverMenuController::class, 'cancelledOrders'])->name('driver.cancelledOrders');
+Route::get('driver/manageAvailability', [DriverMenuController::class, 'manageAvailability'])->name('driver.manageAvailability');
+Route::get('driver/AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('driver.AreaAndPricing');
+/*--------------------------------------------------------------------------------------------------*/
