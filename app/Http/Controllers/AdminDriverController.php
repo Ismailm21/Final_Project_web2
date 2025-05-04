@@ -13,7 +13,7 @@ class AdminDriverController extends Controller
     public function index()
     {
         $data = Driver::all();
-        return View("driver")->with("data",$data);
+        return View("admin.driver")->with("data",$data);
     }
 
     /**

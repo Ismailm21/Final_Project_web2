@@ -41,7 +41,7 @@ public function signUp(Request $request){
   2
   return redirect()->route('otp.verify.form')->with('user_id', $user->id);
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             'street' => 'required|string',
             'city' => 'required|string',
             'postal_code' => 'required|string',
