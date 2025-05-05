@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // 🔹 This line is required
             $table->foreignId('loyalty_points_id')->nullable()->constrained('loyalty_points')->onDelete('cascade');
-
-            $table->enum('Achievements',['Bronze','Silver','Gold','Platinum'])->default('Bronze');
+            $table->enum('Achievements',['Bronze','Silver','Gold','Platinum']);
             $table->timestamps();
         });
     }

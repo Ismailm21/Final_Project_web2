@@ -1,8 +1,0 @@
-<!DOCTYPE html>
-<html>
-<body>
-    <h2>Your OTP Code is:</h2>
-    <p style="font-size: 24px;">{{ $otpCode }}</p>
-    <p>Please use this code to verify your account.</p>
-</body>
-</html>

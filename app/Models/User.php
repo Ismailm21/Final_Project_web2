@@ -27,6 +27,8 @@ class User extends Authenticatable
         'name',
         'email',
         'authentication_method',
+        'otp_code',
+        'otp_expires_at',
         'phone',
         'password',
         'role',
@@ -65,5 +67,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(Client::class);
     }
+    public function generateOtpCode(){
+        $this->timestamps = false;
+        $this->otp_code=rand(1000,9999);
+        $this->otp_expires_at=now()->addMinutes(10);
+        $this->save();
 
+    }
+public function resetOtpCode()
+{
+    $this->timestamps = false;
+    $this->otp_code=null;
+    $this->otp_expires_at=null;
+    $this->save();
+
+}
 }
