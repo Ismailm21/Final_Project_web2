@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('vehicle_type')->default('motorcycle');
             $table->string('vehicle_number')->unique();
             $table->enum('pricing_model', ['fixed', 'perKilometer'])->default('fixed');
+
             $table->decimal('rate_per_km', 10, 2)->nullable();
             $table->decimal('fixed_rate', 10, 2)->nullable();
             $table->decimal('rating', 3, 2)->default('0');

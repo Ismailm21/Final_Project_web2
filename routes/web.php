@@ -5,6 +5,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DriverAuthController;
+use App\Http\Controllers\Drivercontroller;
+use App\Http\Controllers\TwoFactorController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,27 +37,32 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
 });
 
-Route::middleware(['auth'])->group(function () {
 
-    Route::get('driver/dashboard', [DriverAuthController::class, 'index'])->name('driver.dashboard');
-
-});
 
 Route::post('admin/store-driver', [AdminAuthController::class, 'storeDriver'])->name('admin.storeDriver')->middleware(['auth', 'is_admin']);
 
 Route::get('client/login', [ClientAuthController::class, 'showLoginForm'])->name('client.login');
+Route::get('login', [ClientAuthController::class, 'showLoginForm'])->name('login'); // fallback
+
 Route::post('client/login', [ClientAuthController::class, 'login'])->name('client.login.submit');
 
 // Show the sign-up page for clients
 Route::get('client/signup', [ClientAuthController::class, 'showSignUpForm'])->name('client.signup');
 Route::post('client/signup', [ClientAuthController::class, 'signUp'])->name('client.signup.submit');
 
-
-Route::middleware(['auth'])->group(function () {
-    // Client dashboard route, only accessible when logged in
+Route::middleware(['auth', 'TwoFactor'])->group(function () {
     Route::get('client/dashboard', [ClientController::class, 'index'])->name('client.dashboard');
 });
+Route::middleware(['auth','TwoFactor'])->group(function () {
+    Route::get('driver/dashboard', [Drivercontroller::class, 'index'])->name('driver.dashboard');
+});
 
-Route::get('/verify-otp', [ClientAuthController::class, 'showOtpForm'])->name('otp.verify.form');
-Route::post('/verify-otp', [ClientAuthController::class, 'verifyOtp'])->name('otp.verify');
+
+// No middleware here — allow public access
+Route::get('/client/verify', [ClientAuthController::class, 'showOtpForm'])->name('verify.otp');
+Route::post('/client/verify', [ClientAuthController::class, 'verifyOtp'])->name('verify.otp.submit');
+
+Route::get('/driver/verify', [DriverAuthController::class, 'showDriverOtpForm'])->name('driver.verify.otp');
+Route::post('/driver/verify', [DriverAuthController::class, 'verifyDriverOtp'])->name('driver.verify.otp.submit');
+
 

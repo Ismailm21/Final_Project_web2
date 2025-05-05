@@ -20,9 +20,7 @@ class Client extends User
         });
     }
 
-    /**
-     * Relationship: A client has one review.
-     */
+
     public function getReviews()
     {
         return $this->belongsTo(Review::class, 'client_id', 'id');

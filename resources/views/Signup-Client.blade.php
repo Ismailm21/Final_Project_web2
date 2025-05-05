@@ -64,25 +64,8 @@
                 <input type="password" name="password_confirmation" class="form-control"  required>
             </div>
 
-            <div class="mb-3">
-                <label for="loyalty_points_id" class="form-label">Loyalty Points (optional)</label>
-                <select name="loyalty_points_id" class="form-select">
-                    <option value="">Select Points</option>
-                    @foreach ($loyaltyPoints as $loyaltyPoint)
-                        <option value="{{ $loyaltyPoint->id }}">{{ $loyaltyPoint->points }} points</option>
-                    @endforeach
-                </select>
-            </div>
 
-            <div class="mb-4">
-                <label for="Achievements" class="form-label">Achievements</label>
-                <select name="Achievements" class="form-select" required>
-                    <option value="Bronze">Bronze</option>
-                    <option value="Silver">Silver</option>
-                    <option value="Gold">Gold</option>
-                    <option value="Platinum">Platinum</option>
-                </select>
-            </div>
+
 
             <button type="submit" class="btn btn-primary w-100">Sign Up</button>
         </form>
