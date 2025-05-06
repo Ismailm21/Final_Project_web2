@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,9 +21,9 @@
             z-index: 1050 !important;
         }
         .dropdown-menu {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
         }
         .dropdown-menu.active {
             max-height: 200px;
@@ -73,7 +74,7 @@
             <a href="" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-star"></i><span>My Reviews</span>
             </a>
-    
+
         </nav>
     </aside>
 
@@ -81,7 +82,7 @@
         <header class="flex items-center justify-between bg-white shadow-lg rounded-lg p-4">
             <h1 class="text-3xl font-bold text-gray-800">@yield('page_title')</h1>
             <div class="flex items-center space-x-4">
-            <a href="" class="text-red-600 hover:text-red-800">Logout</a>
+                <a href="" class="text-red-600 hover:text-red-800">Logout</a>
             </div>
         </header>
 
