@@ -1,29 +1,60 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class Driver extends User
+class Driver extends Model
+
 {
-    protected $table = 'Users';
-    protected static function booted(): void
+
+    protected $fillable = [
+
+        'user_id', 'area_id', 'vehicle_type', 'vehicle_number',
+
+        'pricing_model', 'rate_per_km', 'fixed_rate', 'rating'
+
+    ];
+
+    public function user()
+
     {
-        static::addGlobalScope('driver', function (Builder $builder) {
-            $builder->where('role', 'driver');
-        });
+
+        return $this->belongsTo(User::class);
+
     }
 
-    public function getAvailability(){
-        return $this->belongsToMany(
-            Availability::class,
-            "driver_availability",
-            "driver_id",
-            "availability_id"
-        );
+    public function area()
+
+    {
+
+        return $this->belongsTo(Area::class);
+
     }
-    public function getArea(){
-        return $this->belongsTo(Area::class, 'area_id', 'id');
+
+    public function availabilities()
+
+    {
+
+        return $this->belongsToMany(Availability::class, 'driver_availability')
+
+            ->withTimestamps();
+
     }
+
+    public function orders()
+
+    {
+
+        return $this->hasMany(Order::class);
+
+    }
+
+    public function addresses()
+
+    {
+
+        return $this->morphMany(Address::class, 'addressable');
+
+    }
+
 }
