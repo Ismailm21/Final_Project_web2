@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('availabilities', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
+
+            $table->enum('day', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
             $table->time('start_time');
             $table->time('end_time');
             $table->enum('status',['available','busy'])->default('available');

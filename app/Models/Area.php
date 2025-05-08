@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
+
+
 use Illuminate\Database\Eloquent\Model;
 
 class Area extends Model
+
 {
+
     protected $fillable = ['name'];
-    public function getDriver(){
+
+    public function drivers()
+
+    {
+
         return $this->hasMany(Driver::class);
+
     }
+
 }

@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->enum('type',['home','work','other'])->default('other');
             $table->string('Street');
             $table->string('City');
             $table->string('State');
             $table->string('Country')->default('Lebanon');
             $table->string('PostalCode');
-            $table->decimal('latitude',10,2);
-            $table->decimal('longitude',10,2);
+            $table->decimal('latitude',10,8);
+            $table->decimal('longitude',10,8);
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
