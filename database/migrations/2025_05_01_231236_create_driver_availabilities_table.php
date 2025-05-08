@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('driver_availability', function (Blueprint $table) {
+        Schema::create('driver_availabilities', function (Blueprint $table) {
             $table->foreignId('driver_id')->constrained()->cascadeOnDelete();
             $table->foreignId('availability_id')->constrained()->cascadeOnDelete();
             $table->primary(['driver_id', 'availability_id']);
