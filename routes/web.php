@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminDriverController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\clientIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,8 +13,24 @@ Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name(
 Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
 Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('admin.save');
 Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
+Route::get('admin/driver_requests',[AdminController::class, 'driverRequests'])->name('admin.showRequests');
+Route::get('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
+Route::get('admin/edit_driver',[AdminController::class, 'editDriver'])->name('admin.editDriver');
+Route::post('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
 
-Route::resource('driver', AdminDriverController::class);
+
+
+/*-----------------------------------------DRIVER JULIEN--------------------------------------------*/
+use App\Http\Controllers\DriverMenuController;
+Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
+Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
+Route::get('driver/inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('driver.inProcessOrders');
+Route::get('driver/completedOrders', [DriverMenuController::class, 'completedOrders'])->name('driver.completedOrders');
+Route::get('driver/cancelledOrders', [DriverMenuController::class, 'cancelledOrders'])->name('driver.cancelledOrders');
+Route::get('driver/manageAvailability', [DriverMenuController::class, 'manageAvailability'])->name('driver.manageAvailability');
+Route::get('driver/AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('driver.AreaAndPricing');
+/*--------------------------------------------------------------------------------------------------*/
+
 
 Route::get('client/request_order',[ClientController::class,'client_request_order'])->name("client_request_order");
 Route::post('store_order',[ClientController::class,'store_order'])->name('store_order');

@@ -2,75 +2,50 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
 use Illuminate\Notifications\Notifiable;
 
-use Laravel\Sanctum\HasApiTokens;
-
 class User extends Authenticatable
-
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
-    use HasApiTokens, Notifiable;
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
-
-        'name', 'email', 'phone', 'role', 'authentication_method', 'password'
-
+        'user_id', 'area_id', 'vehicle_type', 'vehicle_number',
+        'pricing_model', 'rate_per_km', 'fixed_rate', 'rating'
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
     protected $hidden = [
-
-        'password', 'remember_token',
-
+        'password',
+        'remember_token',
     ];
 
-    protected $casts = [
-
-        'email_verified_at' => 'datetime',
-
-    ];
-
-    public function client()
-
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-
-        return $this->hasOne(Client::class);
-
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 
-    public function driver()
-
-    {
-
-        return $this->hasOne(Driver::class);
-
+    public function getAddresses(){
+        return $this->hasOne(Address::class);
     }
-
-    public function isAdmin()
-
-    {
-
-        return $this->role === 'admin';
-
-    }
-
-    public function isDriver()
-
-    {
-
-        return $this->role === 'driver';
-
-    }
-
-    public function isClient()
-
-    {
-
-        return $this->role === 'client';
-
-    }
-
 }
- 

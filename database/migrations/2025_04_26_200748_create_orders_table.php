@@ -13,22 +13,19 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-           // $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
-           // $table->foreignId('driver_id')->constrained('drivers')->onDelete('cascade')->default(1);
+            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade'); // Added: who placed the order
+            $table->foreignId('driver_id')->constrained('drivers')->onDelete('cascade');
             $table->foreignId('pickup_address_id')->constrained('addresses')->onDelete('cascade');
-            $table->foreignId('dropOff_address_id')->constrained('addresses')->onDelete('cascade');
-           // $table->foreignId('payment_id')->constrained('payments')->onDelete('cascade');
-            $table->decimal('package_weight',10,2)->default(0);
+            $table->foreignId('dropoff_address_id')->constrained('addresses')->onDelete('cascade');
+            $table->foreignId('payment_id')->constrained('payments')->onDelete('cascade');
+            $table->decimal('package_weight', 10, 2)->default(0);
             $table->integer('package_size_l')->nullable();
             $table->integer('package_size_w')->nullable();
             $table->integer('package_size_h')->nullable();
-            $table->boolean('urgency')->default(false);
-            $table->enum('status',['pending','processing','completed','cancelled'])->default('pending');
-            $table->string('tracking_code',50)->nullable();
-            $table->float('distance_km')->nullable();
+            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
+            $table->string('tracking_code', 50)->nullable(); //order
             $table->timestamps();
         });
-
     }
 
     /**

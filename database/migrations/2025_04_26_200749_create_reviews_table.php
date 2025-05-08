@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->enum("rating",['1','2','3','4','5'])->default('1');
-            $table->text("review")->nullable();
+            $table->enum('rating', ['1', '2', '3', '4', '5'])->default('1');
+            $table->text('review')->nullable();
             $table->timestamps();
         });
     }
