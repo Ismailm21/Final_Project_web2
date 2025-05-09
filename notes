@@ -1,100 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 font-sans">
-<div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-lg">
-        <div class="p-6 text-2xl font-bold border-b border-gray-200">Admin Panel</div>
-        <nav class="p-4 space-y-4 text-gray-700">
-            <a href="#dashboard" class="flex items-center space-x-2 hover:text-blue-600">
-                <span>📊</span><span>Dashboard</span>
-            </a>
-            <a href="#drivers" class="flex items-center space-x-2 hover:text-blue-600">
-                <span>🚗</span><span>Drivers</span>
-            </a>
-            <a href="#clients" class="flex items-center space-x-2 hover:text-blue-600">
-                <span>👥</span><span>Clients</span>
-            </a>
-            <a href="#addresses" class="flex items-center space-x-2 hover:text-blue-600">
-                <span>📍</span><span>Addresses</span>
-            </a>
-        </nav>
-    </aside>
+public function signUp(Request $request){
+  $validated = $request->validate([
+    'name' => 'required|string|max:255',
+    'email' => 'required|email|unique:users,email',
+    'password' => 'required|string|min:8|confirmed',
+    'loyalty_points_id' => 'nullable|exists:loyalty_points,id',
+    'Achievements' => 'required|in:Bronze,Silver,Gold,Platinum',
+  )]);
+  $user = new User();
+  $user->name = $validated['name'];
+  $user->email = $validated['email'];
+  $otp = rand(100000, 999999);
+  $user->password = Hash::make($validated['password']);
+  $user->role = 'client';
+  $user->otp_code = $otp;
+  $user->otp_expires_at = now()->addMinutes(5);
 
-    <!-- Main Content -->
-    <main class="flex-1 p-6 space-y-8">
-        <!-- Stat Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Used Space</h3>
-                <p class="text-2xl font-bold text-blue-600">49/50 GB</p>
-                <p class="text-xs text-red-500">Get More Space...</p>
-            </div>
-            <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Revenue</h3>
-                <p class="text-2xl font-bold text-green-600">$34,245</p>
-                <p class="text-xs text-gray-400">Last 24 Hours</p>
-            </div>
-            <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Fixed Issues</h3>
-                <p class="text-2xl font-bold text-red-600">75</p>
-                <p class="text-xs text-gray-400">Tracked from GitHub</p>
-            </div>
-            <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Followers</h3>
-                <p class="text-2xl font-bold text-blue-400">+245</p>
-                <p class="text-xs text-gray-400">Just Updated</p>
-            </div>
-        </div>
+  // expires in 5 minutes
+  $user->is_verified = false;
+  $user->save();
 
-        <!-- Driver Form -->
-        <section id="drivers">
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-4">Add / Edit Driver</h2>
-                <form id="driver-form" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <input type="text" placeholder="Name" class="border p-2 rounded" />
-                    <input type="text" placeholder="License Number" class="border p-2 rounded" />
-                    <input type="text" placeholder="Phone Number" class="border p-2 rounded" />
-                    <button type="submit" class="col-span-2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Save Driver</button>
-                </form>
-            </div>
-        </section>
+  // Create the Client record
+  $client = new Client();
+  $client->user_id = $user->id;
 
-        <!-- Driver Table -->
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4">Driver List</h2>
-            <table class="w-full table-auto border text-left">
-                <thead>
-                <tr class="bg-gray-100 text-gray-700">
-                    <th class="border px-4 py-2">ID</th>
-                    <th class="border px-4 py-2">Name</th>
-                    <th class="border px-4 py-2">Phone</th>
-                    <th class="border px-4 py-2">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($drivers as $driver)
-                    <tr>
-                        <td class="border px-4 py-2">{{ $driver->id }}</td>
-                        <td class="border px-4 py-2">{{ $driver->name }}</td>
-                        <td class="border px-4 py-2">{{ $driver->phone }}</td>
-                        <td class="border px-4 py-2 space-x-2">
-                            <button class="bg-yellow-400 px-2 py-1 rounded text-white">Edit</button>
-                            <button class="bg-red-600 px-2 py-1 rounded text-white">Delete</button>
-                            <button class="bg-green-600 px-2 py-1 rounded text-white">View</button>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
-    </main>
-</div>
-</body>
-</html>
+  // Associate with the created user
+  $client->loyalty_points_id = $validated['loyalty_points_id'] ?? null;
+  $client->Achievements = $validated['Achievements'];
+  $client->save();
+  session(['otp_code' => $otp, 'user_id' => $client->id]);
+  Mail::to($client->email)->send(new OtpMail($otp));
+
+  // Flash a success message
+  session()->flash('success', 'You have successfully signed up as a client!');
+
+  // Log the user in
+  auth()->login($user);
+
+  // TODO: Send OTP via SMS or Email — here, we just simulate it    logger("OTP for user {$user->email} is {$otp}");
+  // Redirect to OTP verification view
+  2
+  return redirect()->route('otp.verify.form')->with('user_id', $user->id);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            'street' => 'required|string',
+            'city' => 'required|string',
+            'postal_code' => 'required|string',
+            'address_type' => 'required|in:home,work,other',
+
+
+
+$address = new Address();
+            $address->street = $validated['street'];
+            $address->city = request('city');
+            $address->state = request('state');
+            $address->PostalCode = $validated['postal_code'];
+            $address->type = request('address_type');
+            $address->longitude  = request('longitude');
+            $address->latitude = request('latitude');
+            $address->save();
