@@ -20,8 +20,7 @@ return new class extends Migration
             $table->string('otp_code')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
             $table->boolean('is_verified')->default(false);
-
-            $table->enum('authentication_method', ['google', 'apple_id', 'username'])->default('username')->nullable();
+            
             $table->string('phone')->nullable();
             $table->enum('role', ['admin', 'driver', 'client'])->default('client');
             $table->timestamp('email_verified_at')->nullable();

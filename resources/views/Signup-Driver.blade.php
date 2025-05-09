@@ -77,6 +77,14 @@
                     @enderror
                 </div>
 
+                <div class="mb-3">
+                    <label for="area" class="form-label">Area</label>
+                    <input type="text" id="area" name="area" class="form-control" required>
+                    @error('area')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <!-- Pricing Model -->
                 <div class="mb-3">
                     <label for="pricing_model" class="form-label">Pricing Model</label>
