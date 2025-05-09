@@ -81,5 +81,18 @@ Route::get('driver/completedOrders', [DriverMenuController::class, 'completedOrd
 Route::get('driver/cancelledOrders', [DriverMenuController::class, 'cancelledOrders'])->name('driver.cancelledOrders');
 Route::get('driver/manageAvailability', [DriverMenuController::class, 'manageAvailability'])->name('driver.manageAvailability');
 Route::get('driver/AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('driver.AreaAndPricing');
+Route::get('driver/viewOrderDetails/{id}', [DriverMenuController::class, 'OrderDetails'])->name('driver.viewOrderDetails');
+
+use App\Http\Controllers\DriverController;
+Route::put('driver/updateDriverProfile', [DriverController::class, 'updateDriverProfile'])->name('driver.updateDriverProfile');
+Route::put('driver/updateDriverPassword', [DriverController::class, 'updateDriverPassword'])->name('driver.updateDriverPassword');
+Route::put('driver/updateAreaAndPricing', [DriverController::class, 'updateAreaAndPricing'])->name('driver.updateAreaAndPricing');
+Route::put('driver/updateOrderStatusByDriver', [DriverController::class, 'updateOrderStatusByDriver'])->name('driver.updateOrderStatusByDriver');
 /*--------------------------------------------------------------------------------------------------*/
 
+
+Route::get('client/request_order',[ClientController::class,'client_request_order'])->name("client_request_order");
+Route::post('store_order',[ClientController::class,'store_order'])->name('store_order');
+Route::get('store_time',[ClientController::class,'find_time'])->name('find_time');
+Route::get('client/calculate_distance/{id}',[ClientController::class,'calculateDistance'])->name('calculate_distance');
+Route::get('client/error',[ClientController::class,'client_error'])->name('client_error');

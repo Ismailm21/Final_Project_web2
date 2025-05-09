@@ -31,7 +31,6 @@ class User extends Authenticatable
         'pricing_model', 'rate_per_km', 'fixed_rate', 'rating'
     ];
 
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -84,6 +83,7 @@ class User extends Authenticatable
     public function getAddresses(){
         return $this->hasOne(Address::class);
     }
+
     public function generateOtpCode(){
         $this->timestamps = false;
         $this->otp_code=rand(1000,9999);
@@ -100,4 +100,5 @@ class User extends Authenticatable
         $this->save();
 
     }
+
 }
