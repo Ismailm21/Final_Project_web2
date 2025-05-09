@@ -5,10 +5,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DriverAuthController;
-use App\Http\Controllers\Drivercontroller;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\AdminDriverController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\DriverController; //JULIEN
 
 Route::get('/', function () {
     return view('WelcomePage');
@@ -49,9 +50,7 @@ Route::post('client/signup', [ClientAuthController::class, 'signUp'])->name('cli
 Route::middleware(['auth', 'TwoFactor'])->group(function () {
     Route::get('client/dashboard', [ClientController::class, 'index'])->name('client.dashboard');
 });
-Route::middleware(['auth','TwoFactor'])->group(function () {
-    Route::get('driver/dashboard', [Drivercontroller::class, 'index'])->name('driver.dashboard');
-});
+
 
 
 Route::get('/client/verify', [ClientAuthController::class, 'showOtpForm'])->name('verify.otp');
@@ -83,7 +82,7 @@ Route::get('driver/manageAvailability', [DriverMenuController::class, 'manageAva
 Route::get('driver/AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('driver.AreaAndPricing');
 Route::get('driver/viewOrderDetails/{id}', [DriverMenuController::class, 'OrderDetails'])->name('driver.viewOrderDetails');
 
-use App\Http\Controllers\DriverController;
+
 Route::put('driver/updateDriverProfile', [DriverController::class, 'updateDriverProfile'])->name('driver.updateDriverProfile');
 Route::put('driver/updateDriverPassword', [DriverController::class, 'updateDriverPassword'])->name('driver.updateDriverPassword');
 Route::put('driver/updateAreaAndPricing', [DriverController::class, 'updateAreaAndPricing'])->name('driver.updateAreaAndPricing');

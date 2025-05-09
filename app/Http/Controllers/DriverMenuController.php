@@ -24,7 +24,9 @@ class DriverMenuController extends Controller
     public function myProfile(){
         $userId = 1;//Auth::user()->id;
         $user = User::find($userId);
-        $driver = Driver::where('user_id', $user->id)->first();
+
+        $driver = Driver::where('user_id', 1)->first();
+        //return $driver;
         return view('driver.myProfile', compact('user', 'driver'));
     }
 

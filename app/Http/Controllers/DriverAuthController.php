@@ -9,6 +9,7 @@ use App\Notifications\TwoFactorCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Area;
 
 class DriverAuthController extends Controller
 
@@ -66,9 +67,13 @@ class DriverAuthController extends Controller
             'is_verified' => false,
         ]);
 
+        $areaId = Area::firstOrCreate(['name' => $request->area])->id;
+
         // Create Driver
         $driver = new Driver();
         $driver->user_id = $user->id;
+        $driver->area_id = $areaId;
+        $driver->license = "LB License";
         $driver->vehicle_type = $request->vehicle_type;
         $driver->vehicle_number = $request->vehicle_number;
         $driver->pricing_model = $request->pricing_model;
