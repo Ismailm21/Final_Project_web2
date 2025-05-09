@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('points')->unsigned();
             $table->timestamps();
         });
+
     }
 
     /**
