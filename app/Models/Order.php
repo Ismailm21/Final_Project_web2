@@ -1,27 +1,43 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    public function getClient(){
-        return $this->hasOne(Client::class,'client_id','id');
+    protected $fillable = [
+        'client_id', 'driver_id', 'pickup_address_id', 'dropoff_address_id',
+        'payment_id', 'package_weight', 'package_size_l', 'package_size_w',
+        'package_size_h', 'status', 'tracking_code'
+    ];
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
     }
-    public function getPickAddress(){
-        return $this->hasOne(Address::class,'pickup_address_id','id');
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
     }
-    public function getDropAddress(){
-        return $this->hasOne(Address::class,'dropOff_address_id','id');
+
+    public function pickupAddress()
+    {
+        return $this->belongsTo(Address::class, 'pickup_address_id');
     }
-    public function getDriver(){
-        return $this->hasOne(Driver::class,'driver_id','id');
+
+    public function dropoffAddress()
+    {
+        return $this->belongsTo(Address::class, 'dropoff_address_id');
     }
-    public function getPayment(){
-        return $this->hasMany(Payment::class,'payment_id','id');
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
     }
-    public function getReview(){
-        return $this->belongsTo(Review::class,'order_id','id');
+
+    public function review()
+    {
+        return $this->hasOne(Review::class);
     }
 }

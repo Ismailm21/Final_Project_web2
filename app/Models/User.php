@@ -12,12 +12,6 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-
-
-    public function driver()
-    {
-        return $this->hasOne(Driver::class); // One user can be a driver
-    }
     /**
      * The attributes that are mass assignable.
      *
@@ -33,8 +27,36 @@ class User extends Authenticatable
         'otp_code',
         'otp_expires_at',
         'is_verified',
+        'user_id', 'area_id', 'vehicle_type', 'vehicle_number',
+        'pricing_model', 'rate_per_km', 'fixed_rate', 'rating'
     ];
 
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    public function availabilities()
+    {
+        return $this->belongsToMany(Availability::class, 'driver_availability')
+            ->withTimestamps();
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function addresses()
+    {
+        return $this->morphMany(Address::class, 'addressable');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -62,12 +84,6 @@ class User extends Authenticatable
     public function getAddresses(){
         return $this->hasOne(Address::class);
     }
-
-    // User.php
-    public function client()
-    {
-        return $this->hasOne(Client::class);
-    }
     public function generateOtpCode(){
         $this->timestamps = false;
         $this->otp_code=rand(1000,9999);
@@ -75,12 +91,13 @@ class User extends Authenticatable
         $this->save();
 
     }
-public function resetOtpCode()
-{
-    $this->timestamps = false;
-    $this->otp_code=null;
-    $this->otp_expires_at=null;
-    $this->save();
 
-}
+    public function resetOtpCode()
+    {
+        $this->timestamps = false;
+        $this->otp_code=null;
+        $this->otp_expires_at=null;
+        $this->save();
+
+    }
 }

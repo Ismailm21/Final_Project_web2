@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reviews', function (Blueprint $table) {
+        Schema::create('loyalty_points', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
-            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->enum('rating', ['1', '2', '3', '4', '5'])->default('1');
-            $table->text('review')->nullable();
+            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade'); // Changed: now points reference client
+            $table->integer('points')->unsigned();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reviews');
+        Schema::dropIfExists('loyalty_points');
     }
 };
