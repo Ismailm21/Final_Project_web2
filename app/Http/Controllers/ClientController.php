@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\Availability;
 use App\Models\Driver;
@@ -13,6 +15,11 @@ use Illuminate\Support\Carbon;
 
 class ClientController extends Controller
 {
+    public function index()
+    {
+        return view('client.dashboard');  // Ensure you have a 'client/dashboard.blade.php' view
+    }
+  
     public function client_request_order(){
         return view('client.delivery_request');
     }
@@ -204,8 +211,6 @@ public function client_error(){
 
         return "not available";
     }
-
-
 
 
 
