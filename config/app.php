@@ -67,6 +67,7 @@ return [
 
     'timezone' => 'asia/Beirut',
 
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

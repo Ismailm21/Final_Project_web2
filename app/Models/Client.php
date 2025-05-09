@@ -1,44 +1,23 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
-class Client extends Model
+class Client extends User
 {
-    protected $fillable = ['user_id', 'achievements'];
-
-    public function user()
+    protected $table = 'clients';
+    protected static function booted(): void
     {
-        return $this->belongsTo(User::class);
+        static::addGlobalScope('client', function (Builder $builder) {
+            $builder->where('role', 'client');
+        });
     }
 
-    public function loyaltyPoints()
-    {
-        return $this->hasMany(LoyaltyPoint::class);
+    public function getReviews(){
+        return $this->belongsTo(Review::class, 'client_id','id');
     }
-
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
-
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
-
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
-
-    public function addresses()
-    {
-        return $this->morphMany(Address::class, 'addressable');
-    }
-
-    public function currentLoyaltyPoints()
-    {
-        return $this->loyaltyPoints()->latest()->first();
+    public function getLoyalties(){
+        return $this->hasOne(Loyalty_point::class, 'client_id', 'id');
     }
 }
