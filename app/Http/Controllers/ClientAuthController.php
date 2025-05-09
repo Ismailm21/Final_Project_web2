@@ -31,11 +31,11 @@ class ClientAuthController extends Controller
         ]);
 
         if (Auth::attempt($request->only('email', 'password'))) {
-            // Flash a success message
+
             session()->flash('success', 'You have successfully logged in as a client!');
 
             // Redirect to homepage or another route
-            return "Client signedin";  // Change 'home' to your desired route
+            return "Client dashboard";  // put here the client dashboard view(lynn)
         }
 
         return back()->withErrors(['email' => 'Invalid credentials']);

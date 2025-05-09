@@ -9,19 +9,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IsAdmin
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
+
+
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role === 'admin') {
+        $user = auth()->user();
+
+        if ($user && $user->role === 'admin') {
             return $next($request);
         }
 
-        return redirect()->route('admin.login')->withErrors([
-            'access' => 'You must be an admin to access that page.',
-        ]);
+        return redirect('/admin/login')->withErrors(['access' => 'Unauthorized access. Admins only.']);
     }
 }

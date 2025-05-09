@@ -26,15 +26,12 @@ Route::post('admin/login', [AdminAuthController::class, 'login'])->name('admin.l
 //Route::get('admin/signup', [AdminAuthController::class, 'showSignUpForm'])->name('admin.signup');
 //Route::post('admin/signup', [AdminAuthController::class, 'signUp'])->name('admin.signup.submit');
 
-Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name('admin.driver');
-Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
-Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
-
-Route::post('admin/store-driver', [AdminAuthController::class, 'storeDriver'])->name('admin.storeDriver')->middleware('auth');
-
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-
+    Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name('admin.driver');
+    Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
+    Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
+    Route::post('admin/store-driver', [AdminAuthController::class, 'storeDriver'])->name('admin.storeDriver');
 });
 
 
@@ -58,7 +55,6 @@ Route::middleware(['auth','TwoFactor'])->group(function () {
 });
 
 
-// No middleware here — allow public access
 Route::get('/client/verify', [ClientAuthController::class, 'showOtpForm'])->name('verify.otp');
 Route::post('/client/verify', [ClientAuthController::class, 'verifyOtp'])->name('verify.otp.submit');
 

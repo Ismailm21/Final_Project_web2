@@ -24,5 +24,6 @@ class AdminSeeder extends Seeder
             'role' => 'admin',
             'authentication_method' => 'username',
         ]);
+
     }
 }
