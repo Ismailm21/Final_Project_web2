@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('pricing_model', ['fixed', 'perKilometer'])->default('fixed');
             $table->decimal('rate_per_km', 10, 2)->nullable();
             $table->decimal('fixed_rate', 10, 2)->nullable();
+            $table->enum('status', ['pending', 'approved'])->default('pending');
             $table->decimal('rating', 3, 2)->default('0');
             $table->timestamps();
         });

@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->morphs('addressable'); // Changed: polymorphic relationship for clients/drivers/etc
-            $table->enum('type', ['home', 'work', 'other'])->default('other');
             $table->string('street');
             $table->string('city');
             $table->string('state');
