@@ -138,9 +138,29 @@ class AdminController extends Controller
     public function viewForm(){
         return view('admin.addDriver');
     }
-    public function showRequests(){
+
+    public function viewDriverRequests()
+    {
+        // Assuming pending drivers are stored with 'pending' status
         $pending_drivers = PendingDriver::all(); // Fetch all pending drivers
         return view('admin.driverRequests', compact('pending_drivers'));
+    }
+
+    public function handleDriverRequest($id, $action)
+    {
+        $driver = PendingDriver::findOrFail($id);
+
+
+        if ($action === 'approve') {
+            $driver->status = 'approved';
+            $driver->save();
+            return back()->with('success', 'Driver approved successfully.');
+        } elseif ($action === 'deny') {
+            $driver->delete(); // or $driver->status = 'rejected';
+            return back()->with('success', 'Driver denied and removed.');
+        }
+
+        return back()->with('error', 'Unknown action.');
     }
 
 
