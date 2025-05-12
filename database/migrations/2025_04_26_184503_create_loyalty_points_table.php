@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('loyalty_points', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade'); // Changed: now points reference client
+            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->integer('points')->unsigned();
             $table->timestamps();
         });
