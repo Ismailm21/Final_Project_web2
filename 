@@ -1,0 +1,31 @@
+Merge branch 'dev' of https://github.com/Ismailm21/Final_Project_web2 into dev
+# Please enter a commit message to explain why this merge is necessary,
+# especially if it merges an updated upstream into a topic branch.
+#
+# Lines starting with '#' will be ignored, and an empty message aborts
+# the commit.
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please run
+#	git update-ref -d MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch dev
+# Your branch and 'origin/dev' have diverged,
+# and have 2 and 1 different commits each, respectively.
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified:   app/Models/Address.php
+#	modified:   app/Models/Client.php
+#	modified:   app/Models/Driver.php
+#	modified:   database/migrations/2025_04_26_193342_create_drivers_table.php
+#
+# Changes not staged for commit:
+#	modified:   routes/web.php
+#
