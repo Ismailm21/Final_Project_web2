@@ -47,12 +47,15 @@ class DriverAuthController extends Controller
     // Handle the Driver sign-up process
     public function signUp(Request $request)
     {
+        // Validate the incoming request
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'phone' => 'required|string|max:15',
             'vehicle_number' => 'required|string|unique:drivers,vehicle_number',
             'vehicle_type' => 'required|string',
+            'state' => 'required|string',  // This is the state input from the form
+            'license' => 'required|string|unique:drivers,license',
             'pricing_model' => 'required|in:fixed,perKilometer',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -67,28 +70,25 @@ class DriverAuthController extends Controller
             'is_verified' => false,
         ]);
 
-        $areaId = Area::firstOrCreate(['name' => $request->area])->id;
+        // Find or Create the Area (State) and get its ID
+        $areaId = Area::firstOrCreate(['name' => $request->state])->id;
 
-        // Create Driver
+        // Create the Driver and link it to the User and Area
         $driver = new Driver();
         $driver->user_id = $user->id;
-        $driver->area_id = $areaId;
-        $driver->license = "LB License";
+        $driver->area_id = $areaId;  // Link the area ID to the driver
+        $driver->license = $request->license;
         $driver->vehicle_type = $request->vehicle_type;
         $driver->vehicle_number = $request->vehicle_number;
         $driver->pricing_model = $request->pricing_model;
         $driver->save();
 
-        // Generate OTP & Notify
-        session(['user_id' => $user->id]); // Save user ID in session
-        $user->generateOtpCode();          // Generate OTP
-        $user->notify(new TwoFactorCode()); // Send OTP via email
+        // Generate OTP and Notify
+        session(['user_id' => $user->id]);  // Store the user ID in session
+        $user->generateOtpCode();  // Generate OTP
+        $user->notify(new TwoFactorCode());  // Send OTP via email
 
         return redirect()->route('driver.verify.otp');
-
-
-
-
     }
 
     public function storeDriver(Request $request)

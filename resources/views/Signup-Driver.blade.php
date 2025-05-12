@@ -5,6 +5,20 @@
     <title>Driver Sign Up</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+
+
+        #map-container {
+            height: 300px;
+            width: 100%;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        .pac-container {
+            z-index: 1050 !important;
+        }
+
+
         body {
             background-color: #f8f9fa;
         }
@@ -77,13 +91,29 @@
                     @enderror
                 </div>
 
+
+
                 <div class="mb-3">
-                    <label for="area" class="form-label">Area</label>
-                    <input type="text" id="area" name="area" class="form-control" required>
-                    @error('area')
+                    <label for="address-search" class="form-label">Select Your State</label>
+                    <input type="text" id="address-search" class="form-control" placeholder="Search location or state">
+                </div>
+
+                <input type="hidden" id="state" name="state" required>
+
+
+                <div id="map-container"></div>
+
+
+
+                <!-- License -->
+                <div class="mb-3">
+                    <label for="license" class="form-label">Driver License</label>
+                    <input type="text" id="license" name="license" class="form-control" required>
+                    @error('license')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+
 
                 <!-- Pricing Model -->
                 <div class="mb-3">
@@ -125,4 +155,72 @@
 </div>
 
 </body>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCg0hy8YfWY7LzfDyId8dd1e3FplF3msAY&libraries=places&callback=initMap" async defer></script>
+<script>
+    let map, marker, autocomplete;
+
+    function initMap() {
+        const defaultLocation = { lat: 33.8886, lng: 35.4955 };
+        map = new google.maps.Map(document.getElementById("map-container"), {
+            center: defaultLocation,
+            zoom: 12,
+        });
+
+        marker = new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            draggable: true
+        });
+
+        const input = document.getElementById("address-search");
+        autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) return;
+
+            map.setCenter(place.geometry.location);
+            marker.setPosition(place.geometry.location);
+            fillHiddenFields(place.address_components, place.geometry.location);
+        });
+
+        map.addListener("click", function (event) {
+            const clickedLocation = event.latLng;
+            marker.setPosition(clickedLocation);
+            reverseGeocode(clickedLocation);
+        });
+    }
+
+    function reverseGeocode(latlng) {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: latlng }, (results, status) => {
+            if (status === "OK" && results[0]) {
+                // Fill the text input with the formatted address
+                document.getElementById("address-search").value = results[0].formatted_address;
+
+                // Fill hidden/read-only fields
+                fillHiddenFields(results[0].address_components, latlng);
+            } else {
+                console.warn("Geocoder failed: ", status);
+            }
+        });
+    }
+
+    function getComponent(components, types) {
+        for (let type of types) {
+            const comp = components.find(c => c.types.includes(type));
+            if (comp) return comp.long_name;
+        }
+        return '';
+    }
+
+    function fillHiddenFields(components, location) {
+        document.getElementById("state").value = getComponent(components, ["administrative_area_level_1"]);
+    }
+
+
+    window.initMap = initMap;
+</script>
+
 </html>
+
