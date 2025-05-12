@@ -53,22 +53,22 @@ Route::middleware(['auth', 'TwoFactor'])->group(function () {
 });
 
 
-
 Route::get('/client/verify', [ClientAuthController::class, 'showOtpForm'])->name('verify.otp');
 Route::post('/client/verify', [ClientAuthController::class, 'verifyOtp'])->name('verify.otp.submit');
 
 Route::get('/driver/verify', [DriverAuthController::class, 'showDriverOtpForm'])->name('driver.verify.otp');
 Route::post('/driver/verify', [DriverAuthController::class, 'verifyDriverOtp'])->name('driver.verify.otp.submit');
 
+/*----------------------------------------- ADMIN ISMAIL --------------------------------------------*/
 
 Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name('admin.driver');
 Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
 Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('admin.save');
 Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
-Route::get('admin/driver_requests',[AdminController::class, 'driverRequests'])->name('admin.showRequests');
 Route::get('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
 Route::get('admin/edit_driver',[AdminController::class, 'editDriver'])->name('admin.editDriver');
 Route::post('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
+Route::get('/admin/driver-requests', [AdminController::class, 'viewDriverRequests'])->name('admin.driver.requests');
 
 
 

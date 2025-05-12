@@ -21,6 +21,8 @@ return new class extends Migration
             $table->timestamp('otp_expires_at')->nullable();
             $table->boolean('is_verified')->default(false);
 
+            $table->string('FCM_token')->nullable();
+
             $table->string('phone')->nullable();
             $table->enum('role', ['admin', 'driver', 'client'])->default('client');
             $table->timestamp('email_verified_at')->nullable();

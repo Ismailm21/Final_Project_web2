@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('areas', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->decimal('latitude', 10, 8)->nullable()->change();
+            $table->decimal('longitude', 10, 8)->nullable()->change();
             $table->timestamps();
         });
     }
@@ -23,6 +25,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('areas');
+        Schema::table('areas', function (Blueprint $table) {
+            $table->decimal('latitude', 10, 8)->nullable(false)->change();
+            $table->decimal('longitude', 10, 8)->nullable(false)->change();
+        });
     }
 };

@@ -14,7 +14,7 @@ class Client extends Model
 
     public function loyaltyPoints()
     {
-        return $this->hasMany(Loyalty_point::class);
+        return $this->hasMany(LoyaltyPoint::class);
     }
 
     public function payments()
