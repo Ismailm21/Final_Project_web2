@@ -52,13 +52,13 @@ Route::middleware(['auth', 'TwoFactor'])->group(function () {
 });
 
 
-
 Route::get('/client/verify', [ClientAuthController::class, 'showOtpForm'])->name('verify.otp');
 Route::post('/client/verify', [ClientAuthController::class, 'verifyOtp'])->name('verify.otp.submit');
 
 Route::get('/driver/verify', [DriverAuthController::class, 'showDriverOtpForm'])->name('driver.verify.otp');
 Route::post('/driver/verify', [DriverAuthController::class, 'verifyDriverOtp'])->name('driver.verify.otp.submit');
 
+/*----------------------------------------- ADMIN ISMAIL --------------------------------------------*/
 
 Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name('admin.driver');
 Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
