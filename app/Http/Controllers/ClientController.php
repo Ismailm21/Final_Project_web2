@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\Availability;
@@ -10,7 +9,6 @@ use App\Models\Driver;
 use App\Models\Order;
 use Dotenv\Validator;
 use http\Env\Response;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class ClientController extends Controller
@@ -19,7 +17,7 @@ class ClientController extends Controller
     {
         return view('client.dashboard');  // Ensure you have a 'client/dashboard.blade.php' view
     }
-  
+
     public function client_request_order(){
         return view('client.delivery_request');
     }

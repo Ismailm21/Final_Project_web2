@@ -32,8 +32,4 @@ class Driver extends Model
         return $this->hasMany(Order::class);
     }
 
-    public function addresses()
-    {
-        return $this->morphMany(Address::class, 'addressable');
-    }
 }
