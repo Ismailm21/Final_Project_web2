@@ -54,11 +54,14 @@ class DriverAuthController extends Controller
             'phone' => 'required|string|max:15',
             'vehicle_number' => 'required|string|unique:drivers,vehicle_number',
             'vehicle_type' => 'required|string',
-            'state' => 'required|string',  // This is the state input from the form
+            'state' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
             'license' => 'required|string|unique:drivers,license',
             'pricing_model' => 'required|in:fixed,perKilometer',
             'password' => 'required|string|min:6|confirmed',
         ]);
+
 
         // Create User
         $user = User::create([
@@ -70,8 +73,14 @@ class DriverAuthController extends Controller
             'is_verified' => false,
         ]);
 
-        // Find or Create the Area (State) and get its ID
-        $areaId = Area::firstOrCreate(['name' => $request->state])->id;
+        $area = Area::firstOrCreate(
+            ['name' => $request->state],
+            ['latitude' => $request->latitude, 'longitude' => $request->longitude]
+        );
+
+        $areaId = $area->id;
+
+
 
         // Create the Driver and link it to the User and Area
         $driver = new Driver();

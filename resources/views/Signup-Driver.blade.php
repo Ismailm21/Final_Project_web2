@@ -99,6 +99,9 @@
                 </div>
 
                 <input type="hidden" id="state" name="state" required>
+                <input type="hidden" id="latitude" name="latitude" required>
+                <input type="hidden" id="longitude" name="longitude" required>
+
 
 
                 <div id="map-container"></div>
@@ -216,7 +219,10 @@
 
     function fillHiddenFields(components, location) {
         document.getElementById("state").value = getComponent(components, ["administrative_area_level_1"]);
+        document.getElementById("latitude").value = location.lat();
+        document.getElementById("longitude").value = location.lng();
     }
+
 
 
     window.initMap = initMap;
