@@ -34,12 +34,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
     'google' => [
-         'client_id' => '257329477960-udoj6vg93232k714j3sb2cd9l797bkir.apps.googleusercontent.com',
-        'client_secret' => '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',
-        'redirect' => 'http://127.0.0.1:8000/auth/google/callback',
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
+
 
       'facebook' => [
     'client_id' => '1030748305260575',
