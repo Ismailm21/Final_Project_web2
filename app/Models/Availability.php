@@ -12,4 +12,10 @@ class Availability extends Model
         return $this->belongsToMany(Driver::class, 'driver_availability')
             ->withTimestamps();
     }
+
+    public function pending_drivers()
+    {
+        return $this->belongsToMany(Driver::class, 'pending_availability')
+            ->withTimestamps();
+    }
 }
