@@ -27,6 +27,8 @@ class User extends Authenticatable
         'otp_code',
         'otp_expires_at',
         'is_verified',
+        'social_id',
+        'social_type',
         'user_id', 'area_id', 'vehicle_type', 'vehicle_number',
         'pricing_model', 'rate_per_km', 'fixed_rate', 'rating'
     ];

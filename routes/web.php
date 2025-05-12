@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DriverAuthController;
+use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\AdminDriverController;
 use Illuminate\Support\Facades\Route;
@@ -95,3 +96,10 @@ Route::post('store_order',[ClientController::class,'store_order'])->name('store_
 Route::get('store_time',[ClientController::class,'find_time'])->name('find_time');
 Route::get('client/calculate_distance/{id}',[ClientController::class,'calculateDistance'])->name('calculate_distance');
 Route::get('client/error',[ClientController::class,'client_error'])->name('client_error');
+
+
+Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+
+Route::get('auth/facebook', [SocialiteController::class, 'redirectToFacebook']);
+Route::get('auth/facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
