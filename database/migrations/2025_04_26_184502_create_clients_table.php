@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Added: Link to users table
-            $table->enum('achievements', ['Bronze', 'Silver', 'Gold', 'Platinum'])->default('Bronze');
+            $table->enum('Achievements',['Bronze','Silver','Gold','Platinum'])->default('Bronze');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

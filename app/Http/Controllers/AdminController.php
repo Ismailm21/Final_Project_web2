@@ -293,5 +293,7 @@ class AdminController extends Controller
     public function setLoyaltyRules(Request $request){
 
     }
+
+
 }
 

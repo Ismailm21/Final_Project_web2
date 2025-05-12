@@ -18,6 +18,15 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'password',
+        'role',
+        'authentication_method',
+        'otp_code',
+        'otp_expires_at',
+        'is_verified',
         'user_id', 'area_id', 'vehicle_type', 'vehicle_number',
         'pricing_model', 'rate_per_km', 'fixed_rate', 'rating'
     ];
@@ -70,4 +79,26 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function getAddresses(){
+        return $this->hasOne(Address::class);
+    }
+
+    public function generateOtpCode(){
+        $this->timestamps = false;
+        $this->otp_code=rand(1000,9999);
+        $this->otp_expires_at=now()->addMinutes(10);
+        $this->save();
+
+    }
+
+    public function resetOtpCode()
+    {
+        $this->timestamps = false;
+        $this->otp_code=null;
+        $this->otp_expires_at=null;
+        $this->save();
+
+    }
+
 }
