@@ -5,8 +5,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DriverAuthController;
+use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\AdminDriverController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DriverController; //JULIEN
@@ -73,6 +76,8 @@ Route::get('/admin/driver-requests', [AdminController::class, 'viewDriverRequest
 
 /*-----------------------------------------DRIVER JULIEN--------------------------------------------*/
 use App\Http\Controllers\DriverMenuController;
+use Laravel\Socialite\Facades\Socialite;
+
 Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
 Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
 Route::get('driver/pendingOrders', [DriverMenuController::class, 'pendingOrders'])->name('driver.pendingOrders');
@@ -98,3 +103,14 @@ Route::post('store_order',[ClientController::class,'store_order'])->name('store_
 Route::get('store_time',[ClientController::class,'find_time'])->name('find_time');
 Route::get('client/calculate_distance/{id}',[ClientController::class,'calculateDistance'])->name('calculate_distance');
 Route::get('client/error',[ClientController::class,'client_error'])->name('client_error');
+
+
+Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+
+Route::get('auth/facebook', [SocialiteController::class, 'redirectToFacebook']);
+Route::get('auth/facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
+
+
+Route::get('/auth/github', [SocialiteController::class, 'redirectToProvider']);
+Route::get('/auth/github/callback', [SocialiteController::class, 'handleGitHubCallback']);
