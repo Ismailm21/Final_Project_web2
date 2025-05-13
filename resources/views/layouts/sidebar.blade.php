@@ -6,7 +6,7 @@
         <a href="{{route('admin.dashboard')}}" class="flex items-center space-x-2 hover:text-blue-600">
             <i class="fas fa-chart-line"></i><span>Dashboard</span>
         </a>
-        <a href="{{route('admin.driver.requests')}}" class="flex items-center space-x-2 hover:text-blue-600">
+        <a href="{{route('admin.requests')}}" class="flex items-center space-x-2 hover:text-blue-600">
             <i class="fas fa-clock"></i><span>Pending Drivers</span>
         </a>
         <a href="{{route('admin.addDriver')}}" class="flex items-center space-x-2 hover:text-blue-600">

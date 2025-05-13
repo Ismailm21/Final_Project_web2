@@ -67,7 +67,10 @@ Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('d
 Route::get('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
 Route::get('admin/edit_driver',[AdminController::class, 'editDriver'])->name('admin.editDriver');
 Route::post('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
-Route::get('/admin/driver-requests', [AdminController::class, 'viewDriverRequests'])->name('admin.driver.requests');
+Route::get('admin/driver-requests', [AdminController::class, 'viewDriverRequests'])->name('admin.requests');
+Route::get('admin/view-form',[AdminController::class,'viewForm'])->name('admin.viewForm');
+Route::post('admin/count_d',[AdminController::class, 'countAvailableDrivers'])->name('admin.count_drivers');
+Route::get('admin/orders-by-day', [AdminController::class, 'ordersByDay'])->name('admin.ordersByDay');
 
 
 
