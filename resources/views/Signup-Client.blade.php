@@ -22,6 +22,16 @@
             animation: fadeIn 1s ease-in-out;
         }
 
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            animation: slideDown 1s ease-in-out;
+        }
+
         .signup-card {
             max-width: 500px;
             width: 100%;
@@ -30,6 +40,15 @@
             background-color: #ffffff;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
             animation: fadeInUp 1s ease-in-out;
+            color: #333;
+        }
+
+        .form-label {
+            color: #333;
+        }
+
+        .form-control {
+            color: #000;
         }
 
         .btn-custom {
@@ -45,14 +64,19 @@
             transform: scale(1.05);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to   { transform: translateY(0); opacity: 1; }
         }
 
         @keyframes fadeInUp {
             from { transform: translateY(30px); opacity: 0; }
             to   { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
     </style>
 </head>
