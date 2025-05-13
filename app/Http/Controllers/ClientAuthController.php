@@ -6,6 +6,7 @@ use App\Http\Middleware\TwoFactor;
 use App\Mail\OtpMail;
 use App\Models\Client;
 use App\Models\Loyalty_point;
+use App\Models\LoyaltyPoint;
 use App\Models\User;
 use App\Notifications\TwoFactorCode;
 use Illuminate\Http\Request;
@@ -42,13 +43,11 @@ class ClientAuthController extends Controller
         }
 
 
-
-
     // Show signup form
     public function showSignUpForm()
     {
-        $loyaltyPoints = Loyalty_point::all();  // Get all available loyalty points
-        return view('Signup-Client', compact('loyaltyPoints'));
+      //  $loyaltyPoints = LoyaltyPoint::all();  // Get all available loyalty points
+        return view('Signup-Client');
     }
 
     // Handle signup submission
@@ -84,17 +83,7 @@ class ClientAuthController extends Controller
         $client->user_id = $user->id;
 
         $client->save();
-
-
-
         return view('OtpView', ['user_id' => $user->id]);
-
-
-
-
-
-
-
 
     }
 

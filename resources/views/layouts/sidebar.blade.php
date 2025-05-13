@@ -12,6 +12,9 @@
         <a href="{{route('admin.addDriver')}}" class="flex items-center space-x-2 hover:text-blue-600">
             <i class="fas fa-plus"></i><span>Add Drivers</span>
         </a>
+        <a href="{{route('chats')}}" class="flex items-center space-x-2 hover:text-blue-600">
+            <i class="fas fa-plus"></i><span>Chats</span>
+        </a>
         <a href="{{route('admin.driver')}}" class="flex items-center space-x-2 hover:text-blue-600">
             <i class="fas fa-motorcycle"></i><span> Drivers</span>
         </a>

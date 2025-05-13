@@ -100,5 +100,36 @@ class User extends Authenticatable
         $this->save();
 
     }
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
 
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
+    }
+
+    public function clientOrders()
+    {
+        return $this->hasMany(Order::class, 'client_id');
+    }
+
+    public function driverOrders()
+    {
+        return $this->hasMany(Order::class, 'driver_id');
+    }
+    public function sentMessages()
+    {
+        return $this->hasMany(chats::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(chats::class, 'receiver_id');
+    }
+    public function latestOrder()
+    {
+        return $this->hasOne(Order::class, 'client_id')->latestOfMany();
+    }
 }
