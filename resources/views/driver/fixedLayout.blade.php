@@ -54,6 +54,9 @@
                     <i class="fas fa-chevron-down ml-2 transition-transform duration-200" id="orderIcon"></i>
                 </button>
                 <div id="ordersDropdown" class="dropdown-menu pl-6 mt-2">
+                    <a href="{{route("driver.pendingOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-exclamation-circle mr-2"></i>Pending
+                    </a>
                     <a href="{{route("driver.inProcessOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
                         <i class="fas fa-spinner mr-2"></i>Processing
                     </a>

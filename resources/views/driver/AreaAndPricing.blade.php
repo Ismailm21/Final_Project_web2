@@ -16,14 +16,35 @@
             @csrf
             @method('PUT')
             
-            <!-- Delivery Area Section -->
+            <!-- Current Settings Section -->
             <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-medium text-gray-800 mb-4">Delivery Area</h3>
-                <input type="text"
-                       value="{{ old('area', $driver->area->name ?? '') }}"
-                       name="area"
-                       placeholder="Enter your delivery area"
-                       class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('area') border-red-500 @enderror"/>
+                <h3 class="text-lg font-medium text-gray-800 mb-3">Current Settings</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-3 rounded border-l-3 border-blue-400">
+                        <p class="text-sm font-medium text-gray-600">Delivery Area</p>
+                        <p class="text-gray-800">{{ $driver->area->name ?? 'No delivery area set' }}</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded border-l-3 border-blue-400">
+                        <p class="text-sm font-medium text-gray-600">Pricing</p>
+                        <p class="text-gray-800">${{ $driver->pricing_model == 'fixed' ? $driver->fixed_rate : $driver->rate_per_km }} 
+                           <span class="text-gray-500 text-xs">({{ $driver->pricing_model == 'fixed' ? 'Fixed Price' : 'Per Kilometer' }})</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="mb-3">
+                    <h3 class="text-lg font-medium text-gray-800 mb-3">Update Delivery Area & Pricing</h3>
+                    <input type="text" id="address-search" placeholder="Search location or state" class="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 form-control"/>
+                </div>
+
+                <input type="hidden" id="state" name="state" value="{{-- old('state', $driver->area->name ?? 'Unknown Location') --}}" required>
+                <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $driver->area->latitude ?? 33.8886) }}" required>
+                <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $driver->area->longitude ?? 35.4955) }}" required>
+
+                <div id="map-container"></div>
             </div>
 
             <!-- Pricing Section -->
@@ -63,4 +84,72 @@
             </div>
         @endif
     </div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCg0hy8YfWY7LzfDyId8dd1e3FplF3msAY&libraries=places&callback=initMap" async defer></script>
+<script>
+    let map, marker, autocomplete;
+
+    function initMap() {
+        const defaultLocation = { 
+            lat: {{ $driver->area->latitude ?? 45.5017 }}, 
+            lng: {{ $driver->area->longitude ?? -73.5673 }} 
+        };
+        map = new google.maps.Map(document.getElementById("map-container"), {
+            center: defaultLocation,
+            zoom: 12,
+        });
+
+        marker = new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            draggable: true
+        });
+
+        const input = document.getElementById("address-search");
+        autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) return;
+
+            map.setCenter(place.geometry.location);
+            marker.setPosition(place.geometry.location);
+            fillHiddenFields(place.address_components, place.geometry.location);
+        });
+
+        map.addListener("click", function (event) {
+            const clickedLocation = event.latLng;
+            marker.setPosition(clickedLocation);
+            reverseGeocode(clickedLocation);
+        });
+    }
+
+    function reverseGeocode(latlng) {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: latlng }, (results, status) => {
+            if (status === "OK" && results[0]) {
+                document.getElementById("address-search").value = results[0].formatted_address;
+                fillHiddenFields(results[0].address_components, latlng);
+            } else {
+                console.warn("Geocoder failed: ", status);
+            }
+        });
+    }
+
+    function getComponent(components, types) {
+        for (let type of types) {
+            const comp = components.find(c => c.types.includes(type));
+            if (comp) return comp.long_name;
+        }
+        return '';
+    }
+
+    function fillHiddenFields(components, location) {
+        document.getElementById("state").value = getComponent(components, ["administrative_area_level_1"]);
+        document.getElementById("latitude").value = location.lat();
+        document.getElementById("longitude").value = location.lng();
+    }
+
+    window.initMap = initMap;
+</script>
 @endsection
