@@ -5,13 +5,13 @@
     <title>Client Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> <!-- Added Bootstrap Icons -->
 
     <style>
         body {
             height: 100vh;
             margin: 0;
             background: linear-gradient(to right, #43cea2, #185a9d); /* greenish-blue gradient */
-            color: #fff;
             font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
@@ -23,7 +23,10 @@
         .title {
             font-size: 3rem;
             font-weight: 700;
-            margin-bottom: 15px;
+            font-family: 'Inter', sans-serif;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
             animation: slideDown 1s ease-in-out;
         }
 
@@ -35,6 +38,15 @@
             width: 100%;
             max-width: 400px;
             animation: fadeInUp 1s ease-in-out;
+            color: #333;
+        }
+
+        .form-label {
+            color: #333;
+        }
+
+        .form-control {
+            color: #000;
         }
 
         .btn-custom {
@@ -44,6 +56,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s;
             width: 100%;
+            margin-bottom: 10px; /* Added margin between buttons */
         }
 
         .btn-custom:hover {
@@ -94,11 +107,12 @@
 
         <div class="text-center my-3">or</div>
 
-        <a href="/auth/google" class="btn btn-outline-danger btn-custom mb-2">
-            <i class="bi bi-google"></i> Sign in with Google
+        <!-- Google and Facebook buttons aligned vertically -->
+        <a href="/auth/google" class="btn btn-outline-danger btn-custom" >
+            <i class="bi bi-google" style="margin-right: 10%" ></i> Sign in with Google
         </a>
         <a href="/auth/facebook" class="btn btn-outline-primary btn-custom">
-            <i class="bi bi-facebook"></i> Sign in with Facebook
+            <i class="bi bi-facebook"  style="margin-left: 6% ;margin-right: 10% "></i> Sign in with Facebook
         </a>
 
         <p class="mt-3 text-center">Don't have an account? <a href="{{ route('client.signup') }}">Sign Up</a></p>
