@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
+
     protected $fillable = ['user_id', 'achievements'];
 
     public function user()
