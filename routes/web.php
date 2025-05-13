@@ -8,6 +8,8 @@ use App\Http\Controllers\DriverAuthController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\AdminDriverController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DriverController; //JULIEN
@@ -74,6 +76,8 @@ Route::get('/admin/driver-requests', [AdminController::class, 'viewDriverRequest
 
 /*-----------------------------------------DRIVER JULIEN--------------------------------------------*/
 use App\Http\Controllers\DriverMenuController;
+use Laravel\Socialite\Facades\Socialite;
+
 Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
 Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
 Route::get('driver/inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('driver.inProcessOrders');
@@ -103,3 +107,7 @@ Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCal
 
 Route::get('auth/facebook', [SocialiteController::class, 'redirectToFacebook']);
 Route::get('auth/facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
+
+
+Route::get('/auth/github', [SocialiteController::class, 'redirectToProvider']);
+Route::get('/auth/github/callback', [SocialiteController::class, 'handleGitHubCallback']);
