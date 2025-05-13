@@ -32,8 +32,7 @@
                     <td class="p-2">{{ $driver->email }}</td>
                     <td class="p-2">{{ $driver->phone }}</td>
                     <td class="p-2">{{ $driver->license_number }}</td>
-                    @foreach($pending_availabilities as $pending_availability )
-                        @php$driver_availabilities = $pending_availabilities->where('pending_id', $driver->id); @endphp
+                    @foreach($availabilities as $availability)
                         <td class="p-2">{{ $availability->day }}</td>
                         <td class="p-2">{{ $availability->start_time }}</td>
                         <td class="p-2">{{ $availability->end_time }}</td>

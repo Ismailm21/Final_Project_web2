@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\driver_availability;
+use App\Models\Order;
 use App\Models\PendingDriver;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,13 +19,41 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard');
+        $D_count = Driver::where('status', 'approved')->count();
+        $active_orders = Order::where('status', 'pending')->count();
+        $rawData = DB::table('orders')
+            ->select(
+                DB::raw('DAYOFWEEK(created_at) as weekday'),
+                DB::raw('DAYNAME(created_at) as day'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy(DB::raw('DAYOFWEEK(created_at)'), DB::raw('DAYNAME(created_at)'))
+            ->orderBy(DB::raw('DAYOFWEEK(created_at)'))
+            ->get();
+
+// Build fixed structure with all 7 days
+        $weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        $ordersPerDay = [];
+
+        foreach ($weekdays as $day) {
+            $dayData = $rawData->firstWhere('day', $day);
+            $ordersPerDay[] = [
+                'day' => $day,
+                'total' => $dayData ? $dayData->total : 0
+            ];
+        }
+
+        return view('admin.dashboard',compact('D_count','active_orders'),['orders' => collect($ordersPerDay)]);
     }
+
 
     public function listDrivers()
     {
         $drivers = User::where('role', 'driver')->get();
-        return view('admin.driver', compact('drivers'));
+        $approved_drivers = Driver::where('status', 'approved')->get();
+        $pending_drivers = Driver::where('status', 'pending')->get();
+        $Orders = Order::all()->get();
+        return view('admin.driver', compact('drivers','approved_drivers','pending_drivers'));
     }
 
     public function editDriver($id){
@@ -120,14 +149,6 @@ class AdminController extends Controller
         }
     }
 
-
-
-
-
-
-
-
-
     public function destroyDriver(string $id)
     {
         $obj = Driver::findOrFail($id);
@@ -141,9 +162,8 @@ class AdminController extends Controller
 
     public function viewDriverRequests()
     {
-        // Assuming pending drivers are stored with 'pending' status
-        $pending_drivers = PendingDriver::all(); // Fetch all pending drivers
-        return view('admin.driverRequests', compact('pending_drivers'));
+        $drivers = Driver::where('status','pending')->get();
+        return redirect('admin.viewForm',compact('drivers'));
     }
 
     public function handleDriverRequest($id, $action)

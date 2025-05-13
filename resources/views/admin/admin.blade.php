@@ -35,13 +35,13 @@
                 <p class="text-xs text-gray-400">Not bad</p>
             </div>
             <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-gray-600 text-sm">Fixed Issues</h3>
-                <p class="text-2xl font-bold text-red-600">75</p>
-                <p class="text-xs text-gray-400">Tracked from GitHub</p>
+                <h3 class="text-gray-600 text-sm">Active Orders</h3>
+                <p class="text-2xl font-bold text-red-600">{{$active_orders}}</p>
+                <p class="text-xs text-gray-400">Just Updated</p>
             </div>
             <div class="bg-white rounded-xl shadow p-6">
                 <h3 class="text-gray-600 text-sm">Available Drivers</h3>
-                <p class="text-2xl font-bold text-blue-400">+245</p>
+                <p class="text-2xl font-bold text-blue-400">{{$D_count}}</p>
                 <p class="text-xs text-gray-400">Just Updated</p>
             </div>
         </div>
