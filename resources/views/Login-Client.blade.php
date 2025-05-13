@@ -21,18 +21,19 @@
         }
 
         .title {
-            font-size: 3rem;
+            font-size: 2.5rem; /* Reduced title size */
             font-weight: 700;
             font-family: 'Inter', sans-serif;
             color: white;
-            padding: 10px 20px;
+            padding: 5px 20px; /* Reduced padding */
             border-radius: 10px;
             animation: slideDown 1s ease-in-out;
+            margin-bottom: 20px; /* Added margin for space */
         }
 
         .form-container {
             background-color: white;
-            padding: 30px;
+            padding: 20px; /* Reduced padding */
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
@@ -50,13 +51,13 @@
         }
 
         .btn-custom {
-            padding: 15px;
-            font-size: 1.2rem;
+            padding: 12px; /* Reduced padding */
+            font-size: 1.1rem; /* Reduced font size */
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s;
             width: 100%;
-            margin-bottom: 10px; /* Added margin between buttons */
+            margin-bottom: 8px; /* Reduced margin between buttons */
         }
 
         .btn-custom:hover {
@@ -108,11 +109,15 @@
         <div class="text-center my-3">or</div>
 
         <!-- Google and Facebook buttons aligned vertically -->
-        <a href="/auth/google" class="btn btn-outline-danger btn-custom" >
-            <i class="bi bi-google" style="margin-right: 10%" ></i> Sign in with Google
+        <a href="/auth/google" class="btn btn-outline-danger btn-custom">
+            <i class="bi bi-google" style="margin-right: 10%;"></i> Sign in with Google
         </a>
         <a href="/auth/facebook" class="btn btn-outline-primary btn-custom">
-            <i class="bi bi-facebook"  style="margin-left: 6% ;margin-right: 10% "></i> Sign in with Facebook
+            <i class="bi bi-facebook" style="margin-left: 6%; margin-right: 10%;"></i> Sign in with Facebook
+        </a>
+
+        <a href="/auth/github" class="btn btn-outline-dark btn-custom">
+            <i class="bi bi-github" style="margin-right: 10%;"></i> Sign in with GitHub
         </a>
 
         <p class="mt-3 text-center">Don't have an account? <a href="{{ route('client.signup') }}">Sign Up</a></p>
