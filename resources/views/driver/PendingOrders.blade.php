@@ -1,15 +1,15 @@
 @extends('driver.fixedLayout')
 
-@section('title', 'In Process Orders')
+@section('title', 'Pending Orders')
 
-@section('page_title', 'In Process Orders')
+@section('page_title', 'Pending Orders')
 
 @section('page-content')
     <div class="space-y-6">
-        <h2 class="text-xl font-semibold">You are currently processing the following orders</h2>
+        <h2 class="text-xl font-semibold">Accept or cancel the following order(s)</h2>
         
         @if($orders->isEmpty())
-            <p class="text-gray-500 text-center py-4">No orders in process at the moment.</p>
+            <p class="text-gray-500 text-center py-4">No pending orders at the moment.</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach($orders as $order)
@@ -18,8 +18,8 @@
                             <div>
                                 <h3 class="text-lg font-semibold">#{{ $order->tracking_code }}</h3>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
-                                {{ ucfirst($order->status) }}
+                            <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-900 animate-pulse border-4 border-blue-400 border-dotted">
+                                {{ ucfirst($order->status) }}</span>
                             </span>
                         </div>
 

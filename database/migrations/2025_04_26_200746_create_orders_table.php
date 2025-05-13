@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('package_size_l')->nullable();
             $table->integer('package_size_w')->nullable();
             $table->integer('package_size_h')->nullable();
-            $table->date('delivery_date')->nullable();
+            $table->dateTime('delivery_date')->nullable();
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->string('tracking_code', 50)->nullable(); //order
             $table->timestamps();

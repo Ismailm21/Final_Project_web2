@@ -5,9 +5,40 @@
 @section('page_title', 'Driver Menu')
 
 @section('page-content')
+    <style>
+        @keyframes pulseBorder {
+            0%, 100% {
+                border-color: transparent;
+            }
+            50% {
+                border-color: lightblue;
+            }
+        }
+        
+        .animate-pulse-border {
+            animation: pulseBorder 1.5s ease-in-out infinite;
+        }
+    </style>
     <div class="space-y-6">
         <!-- Status Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+            <!-- Pending Orders Card -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-700">Pending Orders</h3>
+                    <div class="w-12 h-12 rounded-full border-4 border-red-500 border-dashed flex items-center justify-center animate-pulse-border">
+                        <span class="text-xl font-bold text-gray-700">
+                            @if(isset($pendingCount))
+                                {{ $pendingCount }}
+                            @else
+                                0
+                            @endif
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Processing Orders Card -->
             <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <div class="flex items-center justify-between">
@@ -68,7 +99,17 @@
                             <div>
                                 <h3 class="text-lg font-semibold">#{{ $order->tracking_code }}</h3>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-sm {{ $order->status === 'processing' ? 'bg-yellow-100 text-yellow-800' : ($order->status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
+                            <span class="px-3 py-1 rounded-full text-sm
+                                @if($order->status === 'pending')
+                                   bg-blue-100 text-blue-900 animate-pulse border-4 border-blue-400 border-dotted
+                                @elseif($order->status === 'processing')
+                                    bg-yellow-100 text-yellow-800
+                                @elseif($order->status === 'completed')
+                                    bg-green-100 text-green-800
+                                @else
+                                    bg-red-100 text-red-800
+                                @endif
+                            ">
                                 {{ ucfirst($order->status) }}
                             </span>
                         </div>

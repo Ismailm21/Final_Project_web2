@@ -75,6 +75,7 @@ Route::get('/admin/driver-requests', [AdminController::class, 'viewDriverRequest
 use App\Http\Controllers\DriverMenuController;
 Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
 Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
+Route::get('driver/pendingOrders', [DriverMenuController::class, 'pendingOrders'])->name('driver.pendingOrders');
 Route::get('driver/inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('driver.inProcessOrders');
 Route::get('driver/completedOrders', [DriverMenuController::class, 'completedOrders'])->name('driver.completedOrders');
 Route::get('driver/cancelledOrders', [DriverMenuController::class, 'cancelledOrders'])->name('driver.cancelledOrders');
@@ -87,6 +88,8 @@ Route::put('driver/updateDriverProfile', [DriverController::class, 'updateDriver
 Route::put('driver/updateDriverPassword', [DriverController::class, 'updateDriverPassword'])->name('driver.updateDriverPassword');
 Route::put('driver/updateAreaAndPricing', [DriverController::class, 'updateAreaAndPricing'])->name('driver.updateAreaAndPricing');
 Route::put('driver/updateOrderStatusByDriver', [DriverController::class, 'updateOrderStatusByDriver'])->name('driver.updateOrderStatusByDriver');
+Route::put('driver/updateOrderDeliveryDate', [DriverController::class, 'updateOrderDeliveryDate'])->name('driver.updateOrderDeliveryDate');
+Route::post('driver/updateDriverAvailability', [DriverController::class, 'updateDriverAvailability'])->name('driver.updateDriverAvailability');
 /*--------------------------------------------------------------------------------------------------*/
 
 
