@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ChatsController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DriverAuthController;
@@ -95,3 +96,21 @@ Route::post('store_order',[ClientController::class,'store_order'])->name('store_
 Route::get('store_time',[ClientController::class,'find_time'])->name('find_time');
 Route::get('client/calculate_distance/{id}',[ClientController::class,'calculateDistance'])->name('calculate_distance');
 Route::get('client/error',[ClientController::class,'client_error'])->name('client_error');
+
+
+
+// Route for the chats page
+Route::get('chats', [ChatsController::class, 'index'])->name('chats');
+
+// Route for sending messages
+Route::post('/send-message', [ChatsController::class, 'sendMessage'])->name('send-message');
+
+
+// Route for getting chats history
+Route::get('communication-history', [ChatsController::class, 'getChatHistory'])->name('communication-history');
+
+// Route for uploading communication photos
+Route::post('upload-communication-photo', [ChatsController::class, 'uploadImage'])->name('upload-communication-photo');
+
+// Route for getting new messages
+Route::get('get-new-messages/{user_id?}', [ChatsController::class, 'getNewMessages'])->name('get-new-messages');

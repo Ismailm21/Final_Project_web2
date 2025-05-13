@@ -47,6 +47,11 @@ class DriverAuthController extends Controller
     // Handle the Driver sign-up process
     public function signUp(Request $request)
     {
+        $area =new Area();
+        $area->name="burj Hammoud";
+        $area->longtitude=35.0;
+        $area->latitude=32.0;
+        $area->save();
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -55,6 +60,7 @@ class DriverAuthController extends Controller
             'vehicle_type' => 'required|string',
             'pricing_model' => 'required|in:fixed,perKilometer',
             'password' => 'required|string|min:6|confirmed',
+
         ]);
 
         // Create User
@@ -67,12 +73,12 @@ class DriverAuthController extends Controller
             'is_verified' => false,
         ]);
 
-        $areaId = Area::firstOrCreate(['name' => $request->area])->id;
+        //$areaId = Area::firstOrCreate(['name' => $request->area])->id;
 
         // Create Driver
         $driver = new Driver();
         $driver->user_id = $user->id;
-        $driver->area_id = $areaId;
+        $driver->area_id = $area->id;
         $driver->license = "LB License";
         $driver->vehicle_type = $request->vehicle_type;
         $driver->vehicle_number = $request->vehicle_number;

@@ -197,7 +197,7 @@
                                 @error('dropoff_longtitude')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                                 @enderror
-                                </fieldset>
+                        </fieldset>
                                 <!-- Add this DIV inside your Blade view, under the second map (dropoff) -->
                                 <!-- 📌 This should go right after <div id="dropoff-map" class="map-box"></div> -->
 
@@ -228,5 +228,8 @@
                 </div>
             </div>
         </section>
+        <script>
+            
+        </script>
     @endsection
 
