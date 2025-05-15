@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Middleware\TwoFactor;
 use App\Mail\OtpMail;
 use App\Models\Client;
-use App\Models\Loyalty_point;
 use App\Models\LoyaltyPoint;
 use App\Models\User;
 use App\Notifications\TwoFactorCode;
