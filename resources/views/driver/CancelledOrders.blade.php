@@ -19,7 +19,7 @@
                             <h3 class="text-lg font-semibold">#{{ $order->tracking_code }}</h3>
                         </div>
                         <span class="px-3 py-1 rounded-full text-sm bg-red-100 text-red-800">
-                            Cancelled
+                            {{ ucfirst($order->status) }}
                         </span>
                     </div>
 
