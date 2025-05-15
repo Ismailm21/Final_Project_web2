@@ -5,8 +5,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DriverAuthController;
+use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\AdminDriverController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DriverController; //JULIEN
@@ -35,6 +38,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
     Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
     Route::post('admin/store-driver', [AdminAuthController::class, 'storeDriver'])->name('admin.storeDriver');
+    Route::get('admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
 
 
@@ -59,23 +63,28 @@ Route::get('/driver/verify', [DriverAuthController::class, 'showDriverOtpForm'])
 Route::post('/driver/verify', [DriverAuthController::class, 'verifyDriverOtp'])->name('driver.verify.otp.submit');
 
 /*----------------------------------------- ADMIN ISMAIL --------------------------------------------*/
-
 Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name('admin.driver');
 Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
 Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('admin.save');
-Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
-Route::get('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
-Route::get('admin/edit_driver',[AdminController::class, 'editDriver'])->name('admin.editDriver');
-Route::post('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
-Route::get('admin/driver-requests', [AdminController::class, 'viewDriverRequests'])->name('admin.requests');
-Route::get('admin/view-form',[AdminController::class,'viewForm'])->name('admin.viewForm');
 Route::post('admin/count_d',[AdminController::class, 'countAvailableDrivers'])->name('admin.count_drivers');
 Route::get('admin/orders-by-day', [AdminController::class, 'ordersByDay'])->name('admin.ordersByDay');
+Route::post('/driver/{id}/accept', [AdminController::class, 'acceptDriver'])->name('admin.acceptDriver');
+Route::post('/driver/{id}/deny', [AdminController::class, 'denyDriver'])->name('admin.denyDriver');
 
+Route::get('admin/driver{id}', [AdminController::class, 'showDriver'])->name('admin.viewDriver');
+Route::delete('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
+Route::get('admin/edit_driver',[AdminController::class, 'editDriver'])->name('admin.editDriver');
+Route::post('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
+
+
+Route::get('admin/orders', [AdminController::class, 'viewOrders'])->name('admin.showOrders');
+Route::get('/admin/reports/filter', [AdminController::class, 'filterReports'])->name('admin.reports.filter');
 
 
 /*-----------------------------------------DRIVER JULIEN--------------------------------------------*/
 use App\Http\Controllers\DriverMenuController;
+use Laravel\Socialite\Facades\Socialite;
+
 Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
 Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
 Route::get('driver/inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('driver.inProcessOrders');
@@ -98,3 +107,14 @@ Route::post('store_order',[ClientController::class,'store_order'])->name('store_
 Route::get('store_time',[ClientController::class,'find_time'])->name('find_time');
 Route::get('client/calculate_distance/{id}',[ClientController::class,'calculateDistance'])->name('calculate_distance');
 Route::get('client/error',[ClientController::class,'client_error'])->name('client_error');
+
+
+Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+
+Route::get('auth/facebook', [SocialiteController::class, 'redirectToFacebook']);
+Route::get('auth/facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
+
+
+Route::get('/auth/github', [SocialiteController::class, 'redirectToProvider']);
+Route::get('/auth/github/callback', [SocialiteController::class, 'handleGitHubCallback']);

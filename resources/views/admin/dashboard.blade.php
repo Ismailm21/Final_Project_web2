@@ -15,43 +15,61 @@
         <!-- form content here... -->
     </section>
 
-    <!-- Driver Table -->
-    <div class="bg-white p-6 rounded-lg shadow">
-        <head>
-            <title>Orders by Day</title>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        </head>
-        <body>
-        <h2>Orders Per Day of the Week</h2>
-        <canvas id="ordersChart" width="600" height="400"></canvas>
+    <!-- Orders Per Day Card -->
+    <div class="bg-green-500 text-white p-4 rounded-lg shadow-md w-full md:w-1/3">
+        <div class="flex flex-col space-y-2">
+            <h4 class="text-lg font-semibold">Orders Per Day</h4>
+            <p class="text-sm text-white/80">Last 7 days</p>
+            <!-- FIXED HEIGHT WRAPPER -->
+            <div class="relative h-40">
+                <canvas id="ordersChart" class="absolute inset-0 w-full h-full"></canvas>
+            </div>
+        </div>
+    </div>
 
-        <script>
-            const ctx = document.getElementById('ordersChart').getContext('2d');
-            const chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($orders->pluck('day')) !!},
-                    datasets: [{
-                        label: 'Orders',
-                        data: {!! json_encode($orders->pluck('total')) !!},
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($orders->pluck('day')) !!},
+                datasets: [{
+                    label: 'Orders',
+                    data: {!! json_encode($orders->pluck('total')) !!},
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    borderColor: 'white',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: 'white',
+                    pointBorderColor: 'white',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: { color: 'white' },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: 'white', precision: 0 },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
                     }
+                },
+                plugins: {
+                    legend: { display: false }
                 }
-            });
-        </script>
-        </body>
+            }
+        });
+    </script>
+
+
+    </body>
     </div>
 
 @endsection

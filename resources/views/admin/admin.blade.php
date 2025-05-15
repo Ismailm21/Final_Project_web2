@@ -58,37 +58,70 @@
     let map, marker, autocomplete;
 
     function initMap() {
+        // Default location (Beirut, Lebanon based on the coordinates in original code)
         const defaultLocation = { lat: 33.8886, lng: 35.4955 };
+
+        // Initialize the map with default options
         map = new google.maps.Map(document.getElementById("map-container"), {
             center: defaultLocation,
             zoom: 12,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
+        // Create a draggable marker
         marker = new google.maps.Marker({
             position: defaultLocation,
             map: map,
-            draggable: true
+            draggable: true,
+            animation: google.maps.Animation.DROP
         });
 
+        // Set up address search autocomplete
         const input = document.getElementById("address-search");
         autocomplete = new google.maps.places.Autocomplete(input);
-
         autocomplete.addListener("place_changed", () => {
             const place = autocomplete.getPlace();
             if (!place.geometry) return;
 
+            // Center map and set marker to the selected place
             map.setCenter(place.geometry.location);
             marker.setPosition(place.geometry.location);
+
+            // Fill the form fields with the selected location data
             fillHiddenFields(place.address_components, place.geometry.location);
         });
 
+        // Allow clicking on the map to set the marker
         map.addListener("click", function (event) {
             const clickedLocation = event.latLng;
             marker.setPosition(clickedLocation);
             reverseGeocode(clickedLocation);
         });
+
+        // Update form fields when marker is dragged
+        marker.addListener("dragend", function() {
+            reverseGeocode(marker.getPosition());
+        });
+
+        // Set up map type toggle buttons
+        document.getElementById("map-btn").addEventListener("click", function() {
+            map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+            this.classList.remove("bg-gray-100", "text-gray-500");
+            this.classList.add("bg-white", "text-gray-700");
+            document.getElementById("satellite-btn").classList.remove("bg-white", "text-gray-700");
+            document.getElementById("satellite-btn").classList.add("bg-gray-100", "text-gray-500");
+        });
+
+        document.getElementById("satellite-btn").addEventListener("click", function() {
+            map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+            this.classList.remove("bg-gray-100", "text-gray-500");
+            this.classList.add("bg-white", "text-gray-700");
+            document.getElementById("map-btn").classList.remove("bg-white", "text-gray-700");
+            document.getElementById("map-btn").classList.add("bg-gray-100", "text-gray-500");
+        });
     }
 
+    // Convert coordinates to address using reverse geocoding
     function reverseGeocode(latlng) {
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ location: latlng }, (results, status) => {
@@ -104,6 +137,7 @@
         });
     }
 
+    // Extract specific address components and fill form fields
     function getComponent(components, types) {
         for (let type of types) {
             const comp = components.find(c => c.types.includes(type));
@@ -113,14 +147,14 @@
     }
 
     function fillHiddenFields(components, location) {
-        document.getElementById("city").value = getComponent(components, ["locality", "administrative_area_level_2"]);
         document.getElementById("state").value = getComponent(components, ["administrative_area_level_1"]);
-        document.getElementById("country").value = getComponent(components, ["country"]);
         document.getElementById("latitude").value = location.lat();
         document.getElementById("longitude").value = location.lng();
     }
 
+    // Make initMap available globally for the Google Maps callback
     window.initMap = initMap;
+
 </script>
 
 </body>
