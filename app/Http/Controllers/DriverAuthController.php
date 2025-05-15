@@ -59,6 +59,8 @@ class DriverAuthController extends Controller
             'longitude' => 'required|numeric',
             'license' => 'required|string|unique:drivers,license',
             'pricing_model' => 'required|in:fixed,perKilometer',
+            'fixed_rate' => 'nullable|numeric|min:0|required_if:pricing_model,fixed',
+            'rate_per_km' => 'nullable|numeric|min:0|required_if:pricing_model,perKilometer',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -82,19 +84,23 @@ class DriverAuthController extends Controller
 
 
 
-        // Create the Driver and link it to the User and Area
         $driver = new Driver();
         $driver->user_id = $user->id;
-        $driver->area_id = $areaId;  // Link the area ID to the driver
+        $driver->area_id = $areaId;
         $driver->license = $request->license;
         $driver->vehicle_type = $request->vehicle_type;
         $driver->vehicle_number = $request->vehicle_number;
         $driver->pricing_model = $request->pricing_model;
+
+        $driver->fixed_rate = $request->pricing_model === 'fixed' ? $request->fixed_rate : null;
+        $driver->rate_per_km = $request->pricing_model === 'perKilometer' ? $request->rate_per_km : null;
+
         $driver->save();
+
 
         // Generate OTP and Notify
         session(['user_id' => $user->id]);  // Store the user ID in session
-        $user->generateOtpCode();  // Generate OTP
+        $user->generateOtpCode();
         $user->notify(new TwoFactorCode());  // Send OTP via email
 
         return redirect()->route('driver.verify.otp');
