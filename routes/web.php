@@ -121,3 +121,11 @@ Route::get('auth/facebook/callback', [SocialiteController::class, 'handleFaceboo
 
 Route::get('/auth/github', [SocialiteController::class, 'redirectToProvider']);
 Route::get('/auth/github/callback', [SocialiteController::class, 'handleGitHubCallback']);
+
+
+//Raed trying
+
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    Route::get('admin/reports', [\App\Http\Controllers\ReportController::class, 'reports'])->name('admin.reports');
+
+});
