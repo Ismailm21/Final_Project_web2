@@ -101,7 +101,7 @@ class ClientController extends Controller
         $pickup_address->city = $request->pickup_city;
         $pickup_address->state = $request->pickup_state;
         $pickup_address->country = $request->pickup_country;
-        $pickup_address->PostalCode = $request->pickup_postal_code;
+        $pickup_address->postal_code = $request->pickup_postal_code;
         $pickup_address->latitude = $request->pickup_latitude;
         $pickup_address->longitude = $request->pickup_longitude;
         $pickup_address->save();
@@ -112,7 +112,7 @@ class ClientController extends Controller
         $dropoff_address->city = $request->dropoff_city;
         $dropoff_address->state = $request->dropoff_state;
         $dropoff_address->country = $request->dropoff_country;
-        $dropoff_address->PostalCode = $request->dropoff_postal_code;
+        $dropoff_address->postal_code = $request->dropoff_postal_code;
         $dropoff_address->latitude = $request->dropoff_latitude;
         $dropoff_address->longitude = $request->dropoff_longitude;
         $dropoff_address->save();
@@ -126,7 +126,6 @@ class ClientController extends Controller
         $order->pickup_address_id = $pickup_address->id;
         $order->dropOff_address_id = $dropoff_address->id;
        // $order->urgency=$request->urgency;
-        $order->urgency=true;
         $order->save();
 
       return response()->json([
