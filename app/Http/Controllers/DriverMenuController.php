@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 class DriverMenuController extends Controller
 {
     public function index(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $user = User::find($userId);
         $driver = Driver::where('user_id', $user->id)->first();
         $pendingCount = Order::where('driver_id', $driver->id)->where('status', 'pending')->count();
@@ -43,16 +43,16 @@ class DriverMenuController extends Controller
     }
 
     public function myProfile(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $user = User::find($userId);
 
-        $driver = Driver::where('user_id', 1)->first();
+        $driver = Driver::where('user_id', $userId)->first();
         //return $driver;
         return view('driver.myProfile', compact('user', 'driver'));
     }
 
     public function pendingOrders(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         $orders = Order::with(['pickupAddress', 'dropoffAddress'])->where('driver_id', $driver->id)->where('status', 'pending')->get();
         foreach ($orders as $order) {
@@ -64,7 +64,7 @@ class DriverMenuController extends Controller
     }
 
     public function inProcessOrders(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         $orders = Order::with(['pickupAddress', 'dropoffAddress'])->where('driver_id', $driver->id)->where('status', 'processing')->get();
         foreach ($orders as $order) {
@@ -76,7 +76,7 @@ class DriverMenuController extends Controller
     }
 
     public function completedOrders(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         $orders = Order::with(['pickupAddress', 'dropoffAddress'])->where('driver_id', $driver->id)->where('status', 'completed')->get();
         foreach ($orders as $order) {
@@ -88,7 +88,7 @@ class DriverMenuController extends Controller
     }
 
     public function cancelledOrders(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         $orders = Order::with(['pickupAddress', 'dropoffAddress'])->where('driver_id', $driver->id)->where('status', 'cancelled')->get();
         foreach ($orders as $order) {
@@ -100,7 +100,7 @@ class DriverMenuController extends Controller
     }
 
     public function manageAvailability(){
-        $userId = 1; // Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
 
         $availabilityIds = \DB::table('driver_availabilities')
@@ -114,13 +114,13 @@ class DriverMenuController extends Controller
     }
 
     public function areaAndPricing(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::with(['area'])->where('user_id', $userId)->first();
         return view('driver.AreaAndPricing', compact('driver'));
     }
 
     public function OrderDetails($orderId){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         $order = Order::with(['pickupAddress', 'dropoffAddress', 'client'])->where('id', $orderId)->where('driver_id', $driver->id)->first();
         if ($order) {
@@ -151,7 +151,7 @@ class DriverMenuController extends Controller
     }
 
     public function myCalendar(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         $orders = Order::with(['pickupAddress', 'dropoffAddress'])
             ->where('driver_id', $driver->id)
@@ -177,7 +177,7 @@ class DriverMenuController extends Controller
     }
 
     public function myReviews(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         $orderIds = Order::where('driver_id', $driver->id)->pluck('id')->toArray();
         $reviews = Review::whereIn('order_id', $orderIds)->get();
@@ -193,7 +193,7 @@ class DriverMenuController extends Controller
     }
 
     public function myEarnings(){
-        $userId = 1;//Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         
         // Get all orders for this driver
@@ -261,7 +261,7 @@ class DriverMenuController extends Controller
             'device_token' => 'required|string',
         ]);
 
-        $user = user::find(1); //Auth::user();
+        $user = User::find(Auth::user()->id);
         $user->FCM_token = $request->device_token; // Use your existing column
         $user->save();
 
