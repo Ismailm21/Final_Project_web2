@@ -34,7 +34,7 @@
 <div class="flex min-h-screen">
 
     <aside class="w-64 bg-white shadow-lg">
-        <div class="p-6 text-2xl font-bold border-b border-gray-200">Hello Driver</div>
+        <div class="p-6 text-2xl font-bold border-b border-gray-200">Hello {{Auth::user()->name}}</div>
         <nav class="p-4 space-y-4 text-gray-700">
 
             <a href="{{route("driver.Menu")}}" class="flex items-center space-x-2 hover:text-blue-600">
@@ -89,7 +89,7 @@
         <header class="flex items-center justify-between bg-white shadow-lg rounded-lg p-4">
             <h1 class="text-3xl font-bold text-gray-800">@yield('page_title')</h1>
             <div class="flex items-center space-x-4">
-                <a href="" class="text-red-600 hover:text-red-800">Logout</a>
+                <a href="{{route("driver.logout")}}" class="text-red-600 hover:text-red-800">Logout</a>
             </div>
         </header>
 
