@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsClient;
+use App\Http\Middleware\IsDriver;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'TwoFactor' => TwoFactor::class,
             'is_admin' => IsAdmin::class,
+            'is_client' => IsClient::class,
+            'is_driver' => IsDriver::class,
         ]);
 
 

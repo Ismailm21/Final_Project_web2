@@ -32,14 +32,30 @@ Route::post('admin/login', [AdminAuthController::class, 'login'])->name('admin.l
 //Route::get('admin/signup', [AdminAuthController::class, 'showSignUpForm'])->name('admin.signup');
 //Route::post('admin/signup', [AdminAuthController::class, 'signUp'])->name('admin.signup.submit');
 
-/*----------------------------------------- Raed--------------------------------------------*/
-Route::middleware(['auth', 'is_admin'])->group(function () {
+/*----------------------------------------- Raed just added ismail's routes to middleware--------------------------------------------*/
+Route::middleware(['is_admin'])->group(function () {
     Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name('admin.driver');
     Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
     Route::get('admin/driver{id}', [AdminController::class, 'showDrivers'])->name('drivers_profile');
     Route::post('admin/store-driver', [AdminAuthController::class, 'storeDriver'])->name('admin.storeDriver');
     Route::get('admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+    Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('admin.save');
+    Route::post('admin/count_d',[AdminController::class, 'countAvailableDrivers'])->name('admin.count_drivers');
+    Route::get('admin/orders-by-day', [AdminController::class, 'ordersByDay'])->name('admin.ordersByDay');
+    Route::post('/driver/{id}/accept', [AdminController::class, 'acceptDriver'])->name('admin.acceptDriver');
+    Route::post('/driver/{id}/deny', [AdminController::class, 'denyDriver'])->name('admin.denyDriver');
+
+    Route::get('admin/driver{id}', [AdminController::class, 'showDriver'])->name('admin.viewDriver');
+    Route::delete('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
+    Route::get('admin/edit_driver',[AdminController::class, 'editDriver'])->name('admin.editDriver');
+    Route::post('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
+
+
+    Route::get('admin/orders', [AdminController::class, 'viewOrders'])->name('admin.showOrders');
+    Route::get('/admin/reports/filter', [AdminController::class, 'filterReports'])->name('admin.reports.filter');
+
 });
 
 
@@ -82,27 +98,36 @@ Route::put('admin/update_driver/{id}', [AdminController::class, 'updateDriver'])
 Route::get('admin/loyalty', [AdminLoyaltyController::class, 'index'])->name('admin.loyalty');
 Route::post('admin/loyalty', [AdminLoyaltyController::class, 'store'])->name('admin.loyalty.store');
 
+
 /*-----------------------------------------DRIVER JULIEN--------------------------------------------*/
 use App\Http\Controllers\DriverMenuController;
-use Laravel\Socialite\Facades\Socialite;
 
-Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
-Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
-Route::get('driver/pendingOrders', [DriverMenuController::class, 'pendingOrders'])->name('driver.pendingOrders');
-Route::get('driver/inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('driver.inProcessOrders');
-Route::get('driver/completedOrders', [DriverMenuController::class, 'completedOrders'])->name('driver.completedOrders');
-Route::get('driver/cancelledOrders', [DriverMenuController::class, 'cancelledOrders'])->name('driver.cancelledOrders');
-Route::get('driver/manageAvailability', [DriverMenuController::class, 'manageAvailability'])->name('driver.manageAvailability');
-Route::get('driver/AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('driver.AreaAndPricing');
-Route::get('driver/viewOrderDetails/{id}', [DriverMenuController::class, 'OrderDetails'])->name('driver.viewOrderDetails');
+Route::middleware(['is_driver'])->group(function () {
+    Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
+    Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
+    Route::get('driver/pendingOrders', [DriverMenuController::class, 'pendingOrders'])->name('driver.pendingOrders');
+    Route::get('driver/inProcessOrders', [DriverMenuController::class, 'inProcessOrders'])->name('driver.inProcessOrders');
+    Route::get('driver/completedOrders', [DriverMenuController::class, 'completedOrders'])->name('driver.completedOrders');
+    Route::get('driver/cancelledOrders', [DriverMenuController::class, 'cancelledOrders'])->name('driver.cancelledOrders');
+    Route::get('driver/manageAvailability', [DriverMenuController::class, 'manageAvailability'])->name('driver.manageAvailability');
+    Route::get('driver/AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('driver.AreaAndPricing');
+    Route::get('driver/viewOrderDetails/{id}', [DriverMenuController::class, 'OrderDetails'])->name('driver.viewOrderDetails');
+    Route::get('driver/myCalendar', [DriverMenuController::class, 'myCalendar'])->name('driver.myCalendar');
+    Route::get('driver/myReviews', [DriverMenuController::class, 'myReviews'])->name('driver.myReviews');
+    Route::get('driver/myEarnings', [DriverMenuController::class, 'myEarnings'])->name('driver.myEarnings');
+    Route::post('driver/storeFCMtoken', [DriverMenuController::class, 'storeFCMtoken'])->name('storeFCMtoken');
 
 
-Route::put('driver/updateDriverProfile', [DriverController::class, 'updateDriverProfile'])->name('driver.updateDriverProfile');
-Route::put('driver/updateDriverPassword', [DriverController::class, 'updateDriverPassword'])->name('driver.updateDriverPassword');
-Route::put('driver/updateAreaAndPricing', [DriverController::class, 'updateAreaAndPricing'])->name('driver.updateAreaAndPricing');
-Route::put('driver/updateOrderStatusByDriver', [DriverController::class, 'updateOrderStatusByDriver'])->name('driver.updateOrderStatusByDriver');
-Route::put('driver/updateOrderDeliveryDate', [DriverController::class, 'updateOrderDeliveryDate'])->name('driver.updateOrderDeliveryDate');
-Route::post('driver/updateDriverAvailability', [DriverController::class, 'updateDriverAvailability'])->name('driver.updateDriverAvailability');
+    Route::put('driver/updateDriverProfile', [DriverController::class, 'updateDriverProfile'])->name('driver.updateDriverProfile');
+    Route::put('driver/updateDriverPassword', [DriverController::class, 'updateDriverPassword'])->name('driver.updateDriverPassword');
+    Route::put('driver/updateAreaAndPricing', [DriverController::class, 'updateAreaAndPricing'])->name('driver.updateAreaAndPricing');
+    Route::put('driver/updateOrderStatusByDriver', [DriverController::class, 'updateOrderStatusByDriver'])->name('driver.updateOrderStatusByDriver');
+    Route::put('driver/updateOrderDeliveryDate', [DriverController::class, 'updateOrderDeliveryDate'])->name('driver.updateOrderDeliveryDate');
+    Route::post('driver/updateDriverAvailability', [DriverController::class, 'updateDriverAvailability'])->name('driver.updateDriverAvailability');
+    Route::put('driver/acceptPayment', [DriverController::class, 'acceptPayment'])->name('driver.acceptPayment');
+});
+
+Route::get('driver/logout', [DriverController::class, 'driverlogout'])->name('driver.logout');
 /*--------------------------------------------------------------------------------------------------*/
 
 
@@ -123,10 +148,14 @@ Route::get('auth/facebook/callback', [SocialiteController::class, 'handleFaceboo
 Route::get('/auth/github', [SocialiteController::class, 'redirectToProvider']);
 Route::get('/auth/github/callback', [SocialiteController::class, 'handleGitHubCallback']);
 
-
 //Raed trying
 
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('admin/reports', [AdminReportController::class, 'reports'])->name('admin.reports');
 
 });
+Route::middleware(['is_client', 'TwoFactor'])->group(function () {
+    Route::get('client/dashboard', [ClientController::class, 'index'])->name('client.dashboard');
+    //lynn add ur routes here when you finish
+});
+

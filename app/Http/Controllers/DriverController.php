@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Driver;
 use App\Models\Order;
 use App\Models\Area;
 use App\Models\Availability;
+use App\Models\Payment;
 
 class DriverController extends Controller
 {
     public function updateDriverProfile(Request $request)
     {
-        $userId = 1; // Auth::user()->id;
+        $userId = Auth::user()->id;
         $user = User::find($userId);
         $driver = Driver::where('user_id', $user->id)->first();
 
@@ -42,7 +44,7 @@ class DriverController extends Controller
 
     public function updateDriverPassword(Request $request)
     {
-        $userId = 1; // Auth::user()->id;
+        $userId = Auth::user()->id;
         $user = User::find($userId);
 
         
@@ -115,7 +117,7 @@ class DriverController extends Controller
             ['name' => $request->state ?? 'Custom Area', 'latitude' => $request->latitude, 'longitude' => $request->longitude]
         );
         
-        $userId = 1; // Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
         $driver->area_id = $newarea->id;
         $driver->pricing_model = $request->pricing_model;
@@ -155,7 +157,7 @@ class DriverController extends Controller
             }
         }
 
-        $userId = 1; // Auth::user()->id;
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
 
         //Retrieving old availabilities Ids of the driver in the driver_availabilities table
@@ -190,5 +192,24 @@ class DriverController extends Controller
         }
 
         return redirect()->back()->with('success', 'Availability updated successfully.');
+    }
+
+    public function acceptPayment(Request $request){
+        
+        $request->validate([
+            'payment_id' => 'required'
+        ]);
+
+        $payment = Payment::findOrFail($request->payment_id);
+        $payment->status = 'paid';
+        $payment->save();
+
+        return redirect()->back()->with('success', 'Payment accepted successfully.');
+    }
+
+    public function driverlogout()
+    {
+        Auth::logout();
+        return redirect()->route("welcome");
     }
 }
