@@ -34,17 +34,21 @@
 <div class="flex min-h-screen">
 
     <aside class="w-64 bg-white shadow-lg">
-        <div class="p-6 text-2xl font-bold border-b border-gray-200">Hello Driver</div>
+        <div class="p-6 text-2xl font-bold border-b border-gray-200">Hello {{Auth::user()->name}}</div>
         <nav class="p-4 space-y-4 text-gray-700">
 
             <a href="{{route("driver.Menu")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-home"></i><span>Home</span>
             </a>
 
+            <a href="{{route("driver.myEarnings")}}" class="flex items-center space-x-2 hover:text-blue-600">
+                <i class="fas fa-dollar-sign"></i><span>Earnings</span>
+            </a>
+
             <a href="{{route("driver.myProfile")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-user"></i><span>My Profile</span>
             </a>
-            <a href="" class="flex items-center space-x-2 hover:text-blue-600">
+            <a href="{{route("driver.myCalendar")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-calendar-alt"></i><span>Calendar</span>
             </a>
             <div>
@@ -54,6 +58,9 @@
                     <i class="fas fa-chevron-down ml-2 transition-transform duration-200" id="orderIcon"></i>
                 </button>
                 <div id="ordersDropdown" class="dropdown-menu pl-6 mt-2">
+                    <a href="{{route("driver.pendingOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-exclamation-circle mr-2"></i>Pending
+                    </a>
                     <a href="{{route("driver.inProcessOrders")}}" class="block py-2 text-sm text-gray-700 hover:text-blue-600">
                         <i class="fas fa-spinner mr-2"></i>Processing
                     </a>
@@ -71,7 +78,7 @@
             <a href="{{route("driver.AreaAndPricing")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-map-marker-alt"></i><span>Edit Delivery Area</span>
             </a>
-            <a href="" class="flex items-center space-x-2 hover:text-blue-600">
+            <a href="{{route("driver.myReviews")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-star"></i><span>My Reviews</span>
             </a>
 
@@ -82,7 +89,7 @@
         <header class="flex items-center justify-between bg-white shadow-lg rounded-lg p-4">
             <h1 class="text-3xl font-bold text-gray-800">@yield('page_title')</h1>
             <div class="flex items-center space-x-4">
-                <a href="" class="text-red-600 hover:text-red-800">Logout</a>
+                <a href="{{route("driver.logout")}}" class="text-red-600 hover:text-red-800">Logout</a>
             </div>
         </header>
 
@@ -99,6 +106,69 @@
         dropdown.classList.toggle('active');
         icon.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
     }
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-messaging-compat.js"></script>
+
+<script>
+  // Firebase config
+    const firebaseConfig = {
+    apiKey: "AIzaSyC6aFmhBk0uDDgwlxy-Sg9LaTNkGdDvZdA",
+    authDomain: "quickdeliver-709e2.firebaseapp.com",
+    projectId: "quickdeliver-709e2",
+    storageBucket: "quickdeliver-709e2.appspot.com",
+    messagingSenderId: "433277533156",
+    appId: "1:433277533156:web:e9497d040ba9ef0af025f1"
+    };
+
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
+
+    function startFCM() {
+    Notification.requestPermission().then(function(permission) {
+        if (permission === "granted") {
+        messaging.getToken({
+            vapidKey: "BErMcQcZmYlw8IUIahhGcJxxRYgMQe8E51PrdYliZRwI0VdsnWl3L2_cUbcn8AOCuBCuZiAM3FWR-7hYF7-v1Es" // Replace with your VAPID key
+        }).then(function(token) {
+            console.log("FCM Token:", token);
+
+            fetch('{{ route("storeFCMtoken") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Authorization': 'Bearer {{ auth()->user()->api_token ?? '' }}'
+            },
+            body: JSON.stringify({ device_token: token })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Token stored successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error storing token:', error);
+            });
+
+        }).catch(function(err) {
+            console.error('Failed to get token:', err);
+        });
+        } else {
+        console.error('Permission not granted for Notification');
+        }
+    });
+    }
+
+
+  // Run it on page load
+  startFCM();
 </script>
 </body>
 </html>

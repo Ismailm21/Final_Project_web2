@@ -6,10 +6,13 @@
 
 @section('page-content')
     <div class="space-y-6">
-        <form id="driver-form" action="{{-- route('driver.availability.update') --}}" method="POST" class="space-y-6">
+        @if(session('success'))
+            <div class="bg-green-50 text-green-600 p-4 rounded-lg border border-green-200">
+                {{ session('success') }}
+            </div>
+        @endif
+        <form id="driver-form" action="{{route('driver.updateDriverAvailability')}}" method="POST" class="space-y-6">
             @csrf
-            @method('PUT')
-
             <!-- Weekly Availability Section -->
             <div class="bg-white p-6 rounded-lg shadow-sm">
                 <h3 class="text-lg font-medium mb-4">Weekly Availability</h3>
@@ -23,6 +26,14 @@
                         $endTime = $dayAvailability ? $dayAvailability->end_time : '';
                     @endphp
 
+                    <div class="mb-2">
+                        @if($dayAvailability)
+                            <input type="hidden" 
+                                   name="availabilities[{{ $day }}][id]" 
+                                   value="{{ $dayAvailability->id }}">
+                        @endif
+                    </div>
+                    
                     <div class="flex items-center mb-4 space-x-4">
                         <div class="flex items-center w-40">
                             <input type="checkbox"

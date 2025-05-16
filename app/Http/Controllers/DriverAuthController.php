@@ -32,7 +32,12 @@ class DriverAuthController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 'driver'], $request->remember)) {
-            return redirect()->route('driver.dashboard');
+
+            $driver = Driver::where('user_id', Auth::id())->first();
+            if($driver->status == 'pending') {
+                return view('driver.PendingDriver');
+            }
+            return redirect()->route('driver.Menu');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials or you are not a driver.']);
@@ -47,21 +52,23 @@ class DriverAuthController extends Controller
     // Handle the Driver sign-up process
     public function signUp(Request $request)
     {
-        $area =new Area();
-        $area->name="burj Hammoud";
-        $area->longtitude=35.0;
-        $area->latitude=32.0;
-        $area->save();
+        // Validate the incoming request
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'phone' => 'required|string|max:15',
             'vehicle_number' => 'required|string|unique:drivers,vehicle_number',
             'vehicle_type' => 'required|string',
+            'state' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'license' => 'required|string|unique:drivers,license',
             'pricing_model' => 'required|in:fixed,perKilometer',
+            'fixed_rate' => 'nullable|numeric|min:0|required_if:pricing_model,fixed',
+            'rate_per_km' => 'nullable|numeric|min:0|required_if:pricing_model,perKilometer',
             'password' => 'required|string|min:6|confirmed',
-
         ]);
+
 
         // Create User
         $user = User::create([
@@ -73,22 +80,33 @@ class DriverAuthController extends Controller
             'is_verified' => false,
         ]);
 
-        //$areaId = Area::firstOrCreate(['name' => $request->area])->id;
+        $area = Area::firstOrCreate(
+            ['name' => $request->state],
+            ['latitude' => $request->latitude, 'longitude' => $request->longitude]
+        );
 
-        // Create Driver
+        $areaId = $area->id;
+
+
+
         $driver = new Driver();
         $driver->user_id = $user->id;
-        $driver->area_id = $area->id;
-        $driver->license = "LB License";
+        $driver->area_id = $areaId;
+        $driver->license = $request->license;
         $driver->vehicle_type = $request->vehicle_type;
         $driver->vehicle_number = $request->vehicle_number;
         $driver->pricing_model = $request->pricing_model;
+
+        $driver->fixed_rate = $request->pricing_model === 'fixed' ? $request->fixed_rate : null;
+        $driver->rate_per_km = $request->pricing_model === 'perKilometer' ? $request->rate_per_km : null;
+
         $driver->save();
 
-        // Generate OTP & Notify
-        session(['user_id' => $user->id]); // Save user ID in session
-        $user->generateOtpCode();          // Generate OTP
-        $user->notify(new TwoFactorCode()); // Send OTP via email
+
+        // Generate OTP and Notify
+        session(['user_id' => $user->id]);  // Store the user ID in session
+        $user->generateOtpCode();
+        $user->notify(new TwoFactorCode());  // Send OTP via email
 
         return redirect()->route('driver.verify.otp');
 
@@ -155,9 +173,9 @@ class DriverAuthController extends Controller
             $user->otp_expires_at = null;
             $user->save();
 
-            auth()->login($user);
+            Auth::guard('driver')->login($user);
 
-            return redirect()->route('driver.dashboard'); // Redirect to driver dashboard
+            return redirect()->route('driver.login')->with('success', 'OTP verified successfully. You can now log in.');
         }
 
         // OTP is incorrect

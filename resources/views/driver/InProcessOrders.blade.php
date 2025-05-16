@@ -6,7 +6,7 @@
 
 @section('page-content')
     <div class="space-y-6">
-        <h2 class="text-xl font-semibold">You are currently processing the following orders</h2>
+        <h2 class="text-xl font-semibold">You are currently processing the following order(s)</h2>
         
         @if($orders->isEmpty())
             <p class="text-gray-500 text-center py-4">No orders in process at the moment.</p>
@@ -19,7 +19,7 @@
                                 <h3 class="text-lg font-semibold">#{{ $order->tracking_code }}</h3>
                             </div>
                             <span class="px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
-                                Processing
+                                {{ ucfirst($order->status) }}
                             </span>
                         </div>
 
@@ -43,7 +43,7 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium">Pickup Address</p>
-                                    <p class="text-sm text-gray-500">{{ $order->pickupAddress->type . ', ' . $order->pickupAddress->city . ', ' . $order->pickupAddress->state . ', ' . $order->pickupAddress->street . ', ' . ($order->pickupAddress->country ?? 'N/A') }}</p>
+                                    <p class="text-sm text-gray-500">{{$order->pickupAddress->city . ', ' . $order->pickupAddress->state . ', ' . $order->pickupAddress->street . ', ' . ($order->pickupAddress->country ?? 'N/A') }}</p>
                                 </div>
                             </div>
                             
@@ -53,9 +53,10 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium">Dropoff Address</p>
-                                    <p class="text-sm text-gray-500">{{ $order->dropoffAddress->type . ', ' . $order->dropoffAddress->city . ', ' . $order->dropoffAddress->state . ', ' . $order->dropoffAddress->street . ', ' . ($order->dropoffAddress->country ?? 'N/A') }}</p>
+                                    <p class="text-sm text-gray-500">{{$order->dropoffAddress->city . ', ' . $order->dropoffAddress->state . ', ' . $order->dropoffAddress->street . ', ' . ($order->dropoffAddress->country ?? 'N/A') }}</p>
                                 </div>
                             </div>
+                        </div>
 
                         <div class="mt-4 flex justify-end">
                             <button 

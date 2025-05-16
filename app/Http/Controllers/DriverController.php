@@ -4,16 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Driver;
 use App\Models\Order;
 use App\Models\Area;
+use App\Models\Availability;
+use App\Models\Payment;
 
 class DriverController extends Controller
 {
     public function updateDriverProfile(Request $request)
     {
-        $userId = 1; // Auth::user()->id;
+        $userId = Auth::user()->id;
         $user = User::find($userId);
         $driver = Driver::where('user_id', $user->id)->first();
 
@@ -41,7 +44,7 @@ class DriverController extends Controller
 
     public function updateDriverPassword(Request $request)
     {
-        $userId = 1; // Auth::user()->id;
+        $userId = Auth::user()->id;
         $user = User::find($userId);
 
         
@@ -67,30 +70,56 @@ class DriverController extends Controller
     {
         $request->validate([
             'order_id' => 'required',
-            'status' => 'required|string|in:processing,completed,cancelled',
+            'status' => 'required|string|in:pending,processing,completed,cancelled',
         ]);
         $order = Order::find($request->order_id);
         if (!$order) {
             return redirect()->back()->with('error', 'Order not found.');
         }
         $order->status = $request->status;
+
+        if ($request->status === 'completed') {
+            $order->delivery_date = now();
+        } elseif ($request->status === 'cancelled' || $request->status === 'pending' || $request->status === 'processing') {
+            $order->delivery_date = null;
+        }
         $order->save();
         return redirect()->back()->with('success', 'Order status updated successfully.');
     }
 
-    function updateAreaAndPricing(Request $request)
+    public function updateOrderDeliveryDate(Request $request)
     {
         $request->validate([
-            'area' => 'required|string',
+            'order_id' => 'required',
+            'delivery_date' => 'required|date',
+        ]);
+        $order = Order::find($request->order_id);
+        if (!$order) {
+            return redirect()->back()->with('error', 'Order not found.');
+        }
+        $order->delivery_date = $request->delivery_date;
+        $order->save();
+        return redirect()->back()->with('success', 'Delivery date updated successfully.');
+    }
+
+    function updateAreaAndPricing(Request $request)
+    {
+
+        $request->validate([
+            'longitude' => 'required|numeric',
+            'latitude' => 'required|numeric',
             'pricing_model' => 'required|in:fixed,perKilometer',
             'price' => 'required|numeric|min:1',
         ]);
 
-        $areaId = Area::firstOrCreate(['name' => $request->area])->id;
 
-        $userId = 1; // Auth::user()->id;
+        $newarea = Area::firstOrCreate(
+            ['name' => $request->state ?? 'Custom Area', 'latitude' => $request->latitude, 'longitude' => $request->longitude]
+        );
+        
+        $userId = Auth::user()->id;
         $driver = Driver::where('user_id', $userId)->first();
-        $driver->area_id = $areaId;
+        $driver->area_id = $newarea->id;
         $driver->pricing_model = $request->pricing_model;
         if ($request->pricing_model === 'fixed') {
             $driver->fixed_rate = $request->price;
@@ -103,7 +132,84 @@ class DriverController extends Controller
         return redirect()->back()->with('success', 'Area and pricing updated successfully.');
     }
 
-    function updateDriverAvailability(){
+    function updateDriverAvailability(Request $request)
+    {
+        //Validating the request (day, start_time, end_time, active)
+        $newAvailabilities = $request->input('availabilities', []);
+        foreach ($newAvailabilities as $day => $data) {
+            if (isset($data['active']) && $data['active']) {
+                if (empty($data['start_time']) || empty($data['end_time'])) {
+                    return redirect()->back()
+                        ->withErrors(["availabilities.$day" => "Start and end time are required for " . ucfirst($day) . "."])
+                        ->withInput();
+                }
+            }
+        }
 
+        //Validating if start time is less than end time, if not return error
+        foreach ($newAvailabilities as $day => $data) {
+            if (isset($data['active']) && $data['active']) {
+                if ($data['start_time'] >= $data['end_time']) {
+                    return redirect()->back()
+                        ->withErrors(["availabilities.$day" => "Start time must be less than end time for " . ucfirst($day) . "."])
+                        ->withInput();
+                }
+            }
+        }
+
+        $userId = Auth::user()->id;
+        $driver = Driver::where('user_id', $userId)->first();
+
+        //Retrieving old availabilities Ids of the driver in the driver_availabilities table
+        $availabilityIds = \DB::table('driver_availabilities')
+            ->where('driver_id', $driver->id)
+            ->pluck('availability_id')
+            ->toArray();
+
+        //Retrieving old availabilities from the availabilities table
+        $availabilities = Availability::whereIn('id', $availabilityIds)->get();
+
+        //Then deleting the old availabilities
+        foreach ($availabilities as $availability) {
+            \DB::table('availabilities')->where('id', $availability->id)->delete();
+        }
+
+        //Then inserting the new availabilities
+        foreach ($request->input('availabilities', []) as $day => $data) {
+            if (isset($data['active']) && $data['active']) {
+                $availability = new Availability();
+                $availability->day = $day;
+                $availability->start_time = $data['start_time'];
+                $availability->end_time = $data['end_time'];
+                $availability->save();
+
+                //Inserting the new availability Id in the driver_availabilities table (pivot table)
+                \DB::table('driver_availabilities')->insert([
+                    'driver_id' => $driver->id,
+                    'availability_id' => $availability->id,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Availability updated successfully.');
+    }
+
+    public function acceptPayment(Request $request){
+        
+        $request->validate([
+            'payment_id' => 'required'
+        ]);
+
+        $payment = Payment::findOrFail($request->payment_id);
+        $payment->status = 'paid';
+        $payment->save();
+
+        return redirect()->back()->with('success', 'Payment accepted successfully.');
+    }
+
+    public function driverlogout()
+    {
+        Auth::logout();
+        return redirect()->route("welcome");
     }
 }
