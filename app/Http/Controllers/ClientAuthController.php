@@ -135,7 +135,7 @@ class ClientAuthController extends Controller
 
             auth()->login($user);
 
-            return "welcome to client dashboard";}
+            return "welcome";}
 
         // OTP is incorrect
         return redirect()->route('client.signup')->withErrors(['otp_code' => 'Invalid OTP. Please try again.']);
