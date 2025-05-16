@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\Availability;
+use App\Models\Client;
 use App\Models\Driver;
 use App\Models\Order;
 use Dotenv\Validator;
-
-
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
@@ -19,9 +19,12 @@ class ClientController extends Controller
         return view('client.dashboard');  // Ensure you have a 'client/dashboard.blade.php' view
     }
 
-    public function client_request_order(){
-        return view('client.delivery_request');
+    public function client_request_order()
+    {
+        $drivers = Driver::all();
+        return view('client.delivery_request', compact('drivers'));
     }
+
     /*public function store_order(Request $request){
 
         $validated = validator($request->all(),[
@@ -71,12 +74,11 @@ class ClientController extends Controller
     public function store_order(Request $request)
     {
         // Validate input
-      $request->validate([
+        $request->validate([
             "package_weight" => "required|numeric",
             "package_size_l" => "required|numeric",
             "package_size_w" => "required|numeric",
             "package_size_h" => "required|numeric",
-            "urgency" => "required",
 
             "pickup_street" => "required|string",
             "pickup_city" => "required|string",
@@ -94,14 +96,13 @@ class ClientController extends Controller
         ]);
 
 
-
         // Save Pickup Address
         $pickup_address = new Address();
         $pickup_address->street = $request->pickup_street;
         $pickup_address->city = $request->pickup_city;
         $pickup_address->state = $request->pickup_state;
         $pickup_address->country = $request->pickup_country;
-        $pickup_address->PostalCode = $request->pickup_postal_code;
+        $pickup_address->postal_code = $request->pickup_postal_code;
         $pickup_address->latitude = $request->pickup_latitude;
         $pickup_address->longitude = $request->pickup_longitude;
         $pickup_address->save();
@@ -112,7 +113,7 @@ class ClientController extends Controller
         $dropoff_address->city = $request->dropoff_city;
         $dropoff_address->state = $request->dropoff_state;
         $dropoff_address->country = $request->dropoff_country;
-        $dropoff_address->PostalCode = $request->dropoff_postal_code;
+        $dropoff_address->postal_code = $request->dropoff_postal_code;
         $dropoff_address->latitude = $request->dropoff_latitude;
         $dropoff_address->longitude = $request->dropoff_longitude;
         $dropoff_address->save();
@@ -124,18 +125,68 @@ class ClientController extends Controller
         $order->package_size_w = $request->package_size_w;
         $order->package_size_h = $request->package_size_h;
         $order->pickup_address_id = $pickup_address->id;
-        $order->dropOff_address_id = $dropoff_address->id;
-       // $order->urgency=$request->urgency;
-        $order->urgency=true;
+        $order->dropoff_address_id = $dropoff_address->id;
+        $user = Auth::user();
+
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $client = Client::where('user_id', $user->id)->first();
+
+        if (!$client) {
+            return response()->json(['error' => 'Client profile not found.'], 404);
+        }
+
+
+// Then assign client_id to the order
+        $order->client_id = $client->id;
+
+        // $order->urgency=$request->urgency;
+        // $order->urgency=true;
+
+        /*     $pickupLat = $pickup_address->latitude;
+        $pickupLng = $pickup_address->longitude;
+        $dropoffLat = $dropoff_address->latitude;
+        $dropoffLng = $dropoff_address->longitude;
+
+        // Get All Approved Drivers
+   $drivers = Driver::where('status', 'approved')->get();
+        $matching_drivers = []; // Array to store matching driver names
+
+        // Loop through each driver and calculate distances
+        foreach ($drivers as $driver) {
+            $driverLat = $driver->area->latitude;
+            $driverLng = $driver->area->longitude;
+
+            // Calculate distance from driver’s area to dropoff address
+            $distance_driver = $this->getDistanceInKm($driverLat, $driverLng, $dropoffLat, $dropoffLng);
+
+            // Calculate distance from pickup address to dropoff address (client's distance)
+            $distance_client = $this->getDistanceInKm($pickupLat, $pickupLng, $dropoffLat, $dropoffLng);
+
+            // Check if driver's area distance is less than or equal to the client's distance
+            if ($distance_driver <= $distance_client) {
+                $matching_drivers[] = $driver->user->name;
+            }
+        }*/
+
+        $order->driver_id=null;
         $order->save();
 
-      return response()->json([
-            "message" => "Order created successfully",
-            "order" => $order,
-            "pickup" => $pickup_address,
-            "dropoff" => $dropoff_address
-        ]);
-       // return redirect()->route('client.request_order');
+
+        return redirect()->route('orders.showAssignDriverForm',['id'=>$order->id]);
+        /*  return response()->json([
+              "message" => "Order created successfully",
+              "order" => $order,
+              "pickup" => $pickup_address,
+              "dropoff" => $dropoff_address,
+
+              //"matching_drivers" => $matching_drivers, // Include matching driver names
+          ]);*/
+        // return redirect()->route('client.request_order');
     }
 
     public function calculateDistance($orderId)
@@ -187,9 +238,9 @@ class ClientController extends Controller
         return $earthRadius * $c;
     }
 
-public function client_error(){
+    public function client_error(){
         return view('client.error');
-}
+    }
 
 
     public function find_time()
@@ -210,6 +261,8 @@ public function client_error(){
 
         return "not available";
     }
+
+
 
 
 
