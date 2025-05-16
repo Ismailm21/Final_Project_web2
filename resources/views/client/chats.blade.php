@@ -1,8 +1,4 @@
-@extends('layouts.template_client')
 
-@section('title', 'Driver')
-
-@section('content')
     <title>Messenger</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
@@ -254,4 +250,4 @@
                     return message.message;
                     }
     </script>
-@endsection
+
