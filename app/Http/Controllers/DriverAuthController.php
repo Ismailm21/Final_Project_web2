@@ -164,9 +164,9 @@ class DriverAuthController extends Controller
             $user->otp_expires_at = null;
             $user->save();
 
-            auth()->login($user);
+            Auth::guard('driver')->login($user);
 
-            return redirect()->route('driver.dashboard'); // Redirect to driver dashboard
+            return "welcome!!"; // Redirect to driver dashboard
         }
 
         // OTP is incorrect
