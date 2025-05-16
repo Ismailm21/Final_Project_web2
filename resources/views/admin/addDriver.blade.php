@@ -1,12 +1,8 @@
-<!-- resources/views/admin.blade.php -->
-
 @extends('admin.admin')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Add/Edit Driver')
 
 @section('content')
-    <!-- resources/views/admin.blade.php -->
-
     <section id="drivers">
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-semibold mb-4">Add / Edit Driver</h2>
@@ -62,14 +58,57 @@
                        onclick="togglePassword('confirm_password', this)"></i>
                 </div>
 
-                <input type="text"
-                       value="{{ old('area') }}"
-                       name="area"
-                       placeholder="Area"
-                       class="col-span-2 border p-2 rounded @error('area') border-red-500 @enderror"/>
-                @error('area') <div class="text-red-600">{{ $message }}</div> @enderror
+                <!-- Area Selection with Map -->
+                <div class="col-span-2">
+                    <div class="mb-4">
+                        <label for="address-search" class="block text-gray-700 mb-2">Service Area</label>
+                        <input type="text"
+                               id="address-search"
+                               placeholder="Search location"
+                               class="w-full border p-2 rounded">
+                    </div>
 
-                <div class="mb-6">
+                    <!-- Map container with proper styling -->
+                    <div class="mb-4 relative">
+                        <div id="map-container" class="w-full h-96 rounded border overflow-hidden"></div>
+
+                        <!-- Map/Satellite toggle buttons -->
+                        <div class="absolute top-4 left-4 bg-white rounded shadow-md z-10">
+                            <button type="button" id="map-btn" class="px-6 py-2 text-gray-700 bg-white border-r font-medium">Map</button>
+                            <button type="button" id="satellite-btn" class="px-6 py-2 text-gray-500 bg-gray-100">Satellite</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auto-filled address info -->
+                <fieldset class="col-span-2 border border-gray-300 rounded p-4">
+                    <legend class="text-sm font-semibold text-gray-600 px-2">Auto-Filled Address Info</legend>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text"
+                               id="state"
+                               name="state"
+                               readonly
+                               placeholder="State"
+                               class="border p-2 rounded bg-gray-50 text-gray-600 cursor-not-allowed">
+
+                        <input type="text"
+                               id="latitude"
+                               name="latitude"
+                               readonly
+                               placeholder="Latitude"
+                               class="border p-2 rounded bg-gray-50 text-gray-600 cursor-not-allowed">
+
+                        <input type="text"
+                               id="longitude"
+                               name="longitude"
+                               readonly
+                               placeholder="Longitude"
+                               class="border p-2 rounded bg-gray-50 text-gray-600 cursor-not-allowed md:col-span-2">
+                    </div>
+                </fieldset>
+
+                <div class="col-span-2 mb-6">
                     <label class="block text-gray-700 mb-2">Weekly Availability</label>
 
                     @foreach(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] as $day)
@@ -100,7 +139,7 @@
                 <input type="text"
                        value="{{ old('license') }}"
                        name="license"
-                       placeholder="license"
+                       placeholder="License Plate"
                        class="col-span-2 border p-2 rounded @error('license') border-red-500 @enderror"/>
                 @error('license') <div class="text-red-600">{{ $message }}</div> @enderror
 
@@ -114,21 +153,21 @@
                 <input type="text"
                        value="{{ old('vehicle_number') }}"
                        name="vehicle_number"
-                       placeholder="Vehicle number"
+                       placeholder="Vehicle Number"
                        class="col-span-2 border p-2 rounded @error('vehicle_number') border-red-500 @enderror"/>
                 @error('vehicle_number') <div class="text-red-600">{{ $message }}</div> @enderror
 
                 <div class="row mb-3 col-span-2">
                     <label class="form-label fw-bold">Pricing</label>
-                    <div class="input-group">
+                    <div class="flex">
                         <input type="number"
                                name="price"
-                               class="form-control"
+                               class="border p-2 rounded-l flex-1"
                                placeholder="0.00"
                                min="0"
                                step="0.01"
                                value="{{ old('price') }}">
-                        <select name="pricing_model" class="form-select" style="max-width: 120px;">
+                        <select name="pricing_model" class="border border-l-0 p-2 rounded-r" style="min-width: 120px;">
                             <option value="fixed" {{ old('pricing_model') == 'fixed' ? 'selected' : '' }}>Fixed</option>
                             <option value="perKilometer" {{ old('pricing_model') == 'per_km' ? 'selected' : '' }}>Per km</option>
                         </select>
@@ -139,18 +178,113 @@
 
                 <button type="submit" class="col-span-2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Save Driver</button>
             </form>
-
         </div>
     </section>
     <script>
-        function togglePassword(inputId, iconElement) {
-            const input = document.getElementById(inputId);
-            const isPassword = input.type === 'password';
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('driver-form');
 
-            input.type = isPassword ? 'text' : 'password';
-            iconElement.classList.toggle('bi-eye-slash-fill');
-            iconElement.classList.toggle('bi-eye-fill');
-        }
+            form.addEventListener('submit', function(e) {
+                let hasError = false;
+
+                // Check required fields
+                const requiredFields = [
+                    'name', 'email', 'phone', 'password', 'password_confirmation',
+                    'license', 'vehicle_type', 'vehicle_number', 'price'
+                ];
+
+                requiredFields.forEach(field => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (!input.value.trim()) {
+                        markFieldAsInvalid(input, 'This field is required');
+                        hasError = true;
+                    } else {
+                        clearFieldError(input);
+                    }
+                });
+
+                // Check email format
+                const emailInput = form.querySelector('[name="email"]');
+                if (emailInput.value && !isValidEmail(emailInput.value)) {
+                    markFieldAsInvalid(emailInput, 'Please enter a valid email address');
+                    hasError = true;
+                }
+
+                // Check password match
+                const passwordInput = form.querySelector('[name="password"]');
+                const confirmInput = form.querySelector('[name="password_confirmation"]');
+                if (passwordInput.value && confirmInput.value && passwordInput.value !== confirmInput.value) {
+                    markFieldAsInvalid(confirmInput, 'Passwords do not match');
+                    hasError = true;
+                }
+
+                // Check map coordinates
+                const latInput = form.querySelector('[name="latitude"]');
+                const lngInput = form.querySelector('[name="longitude"]');
+                if (!latInput.value || !lngInput.value) {
+                    alert('Please select a location on the map');
+                    hasError = true;
+                }
+
+                // Check availability times when day is checked
+                const availabilityCheckboxes = form.querySelectorAll('input[type="checkbox"][name^="availabilities"]');
+                availabilityCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const day = checkbox.id.replace('available_', '');
+                        const startTime = form.querySelector(`[name="availabilities[${day}][start_time]"]`);
+                        const endTime = form.querySelector(`[name="availabilities[${day}][end_time]"]`);
+
+                        if (!startTime.value || !endTime.value) {
+                            alert(`Please set both start and end time for ${day.charAt(0).toUpperCase() + day.slice(1)}`);
+                            hasError = true;
+                        }
+                    }
+                });
+
+                if (hasError) {
+                    e.preventDefault();
+                }
+            });
+
+            function markFieldAsInvalid(field, message) {
+                field.classList.add('border-red-500');
+
+                // Check if error message already exists
+                let errorDiv = field.nextElementSibling;
+                if (!errorDiv || !errorDiv.classList.contains('text-red-600')) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'text-red-600 text-sm mt-1';
+                    field.parentNode.insertBefore(errorDiv, field.nextSibling);
+                }
+                errorDiv.textContent = message;
+            }
+
+            function clearFieldError(field) {
+                field.classList.remove('border-red-500');
+                const errorDiv = field.nextElementSibling;
+                if (errorDiv && errorDiv.classList.contains('text-red-600')) {
+                    errorDiv.remove();
+                }
+            }
+
+            function isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            // Toggle password visibility function
+            window.togglePassword = function(inputId, icon) {
+                const input = document.getElementById(inputId);
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.remove("bi-eye-slash-fill");
+                    icon.classList.add("bi-eye-fill");
+                } else {
+                    input.type = "password";
+                    icon.classList.remove("bi-eye-fill");
+                    icon.classList.add("bi-eye-slash-fill");
+                }
+            };
+        });
     </script>
-
 @endsection

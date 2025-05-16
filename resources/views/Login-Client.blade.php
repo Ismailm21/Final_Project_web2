@@ -92,8 +92,14 @@
 <body>
 
 <h1 class="title">Client Login</h1>
-
+{{-- DEBUG: dump all errors --}}
+@if ($errors->any())
+    <div class="alert alert-danger">
+        {{ $errors->first() }}
+    </div>
+@endif
 <div class="form-container">
+
     <form method="POST" action="{{ route('client.login.submit') }}">
         @csrf
         <div class="mb-3">

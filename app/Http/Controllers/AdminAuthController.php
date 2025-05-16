@@ -61,4 +61,7 @@ class AdminAuthController extends Controller
 
         return redirect()->route('admin.driver')->with('success', 'Driver created successfully.');
     }
+    public function logout(){
+        Auth::logout();
+    }
 }
