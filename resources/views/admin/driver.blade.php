@@ -58,11 +58,9 @@
                     <td class="border px-4 py-2">{{ $driver->status }}</td>
                     <td class="border px-4 py-2 space-x-2">
                         @if ($driver->status === 'approved')
-                            <form method="POST" action="{{ route('admin.editDriver', $driver->id) }}" class="inline">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="bg-yellow-400 px-2 py-1 rounded text-white">Edit</button>
-                            </form>
+
+                            <a href="{{route('admin.editDriver',['id'=>$driver->id])}}" class="btn btn-success">Edit</a>
+
                             <form method="POST" action="{{ route('admin.deleteDriver', $driver->id) }}" class="inline">
                                 @csrf
                                 @method('DELETE')

@@ -50,7 +50,7 @@ Route::middleware(['is_admin'])->group(function () {
     Route::get('admin/driver{id}', [AdminController::class, 'showDriver'])->name('admin.viewDriver');
     Route::delete('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
     Route::get('admin/edit_driver',[AdminController::class, 'editDriver'])->name('admin.editDriver');
-    Route::post('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
+    Route::put('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
 
 
     Route::get('admin/orders', [AdminController::class, 'viewOrders'])->name('admin.showOrders');
@@ -80,12 +80,6 @@ Route::get('/driver/verify', [DriverAuthController::class, 'showDriverOtpForm'])
 Route::post('/driver/verify', [DriverAuthController::class, 'verifyDriverOtp'])->name('driver.verify.otp.submit');
 
 /*----------------------------------------- ADMIN ISMAIL --------------------------------------------*/
-Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
-Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('admin.save');
-Route::post('admin/count_d',[AdminController::class, 'countAvailableDrivers'])->name('admin.count_drivers');
-Route::get('admin/orders-by-day', [AdminController::class, 'ordersByDay'])->name('admin.ordersByDay');
-Route::post('/driver/{id}/accept', [AdminController::class, 'acceptDriver'])->name('admin.acceptDriver');
-Route::post('/driver/{id}/deny', [AdminController::class, 'denyDriver'])->name('admin.denyDriver');
 Route::get('admin/orders', [AdminController::class, 'listOrders'])->name('admin.showOrders');
 Route::get('admin/driver{id}', [AdminController::class, 'showDriver'])->name('admin.viewDriver');
 Route::get('admin/orders/{id}', [adminController::class, 'OrderDetails'])->name('admin.showOrderDetails');
@@ -93,7 +87,7 @@ Route::get('admin/orders/{id}', [adminController::class, 'OrderDetails'])->name(
 
 Route::delete('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
 Route::get('admin/edit_driver/{id}', [AdminController::class, 'editDriver'])->name('admin.editDriver');
-Route::put('admin/update_driver/{id}', [AdminController::class, 'updateDriver'])->name('admin.updateDriver');
+
 
 Route::get('admin/loyalty', [AdminLoyaltyController::class, 'index'])->name('admin.loyalty');
 Route::post('admin/loyalty', [AdminLoyaltyController::class, 'store'])->name('admin.loyalty.store');
