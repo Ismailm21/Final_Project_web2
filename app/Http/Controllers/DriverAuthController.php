@@ -32,7 +32,7 @@ class DriverAuthController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 'driver'], $request->remember)) {
-            return redirect()->route('driver.dashboard');
+            return redirect()->route('driver.Menu');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials or you are not a driver.']);
@@ -164,9 +164,9 @@ class DriverAuthController extends Controller
             $user->otp_expires_at = null;
             $user->save();
 
-            auth()->login($user);
+            Auth::guard('driver')->login($user);
 
-            return redirect()->route('driver.dashboard'); // Redirect to driver dashboard
+            return redirect()->route('driver.login')->with('success', 'OTP verified successfully. You can now log in.');
         }
 
         // OTP is incorrect
