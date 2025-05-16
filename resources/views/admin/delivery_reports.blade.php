@@ -1,8 +1,16 @@
-<!DOCTYPE html>
+<!-- resources/views/admin.blade.php -->
+
+@extends('admin.admin')
+
+@section('title', 'Admin Report')
+
+@section('content')
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Delivery Reports</title>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 </head>
 <body>
@@ -31,6 +39,7 @@
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
         <tr>
+            <th>Order ID</th>
             <th>Total Paid</th>
             <th>Remaining</th>
             <th>Driver Share ($ / %)</th>
@@ -40,6 +49,7 @@
         <tbody>
         @foreach($detailedReports as $report)
             <tr>
+                <td>{{ $report['order_id'] }}</td>
                 <td>${{ number_format($report['total_paid'], 2) }}</td>
                 <td>${{ number_format($report['remaining'], 2) }}</td>
                 <td>${{ number_format($report['driver_share'], 2) }} ({{ $report['driver_percent'] }}%)</td>
@@ -51,3 +61,6 @@
 </div>
 </body>
 </html>
+
+
+@endsection
