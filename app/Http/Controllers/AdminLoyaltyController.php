@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\LoyaltyPoint;
 use App\Models\Client;
 use App\Models\Driver;
-use App\Models\Order; 
-use App\Models\Payment; 
+use App\Models\Order;
+use App\Models\Payment;
 
 class AdminLoyaltyController extends Controller
 {
