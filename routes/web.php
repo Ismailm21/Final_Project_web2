@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\AdminLoyaltyController;
+use App\Http\Controllers\ChatbotController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -159,3 +160,6 @@ Route::middleware(['is_client', 'TwoFactor'])->group(function () {
     //lynn add ur routes here when you finish
 });
 
+
+
+Route::post('/chat/send', [ChatbotController::class, 'send'])->name("ChatBotSend");
