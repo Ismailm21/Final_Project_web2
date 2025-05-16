@@ -17,7 +17,10 @@ class ChatsController extends Controller
         // Retrieve the authenticated user's role
         $authUserRole = Auth::user()->role;
 
-        // Fetch users based on the authenticated user's role
+        // Fetch users based on the authenticated user's
+        //If user is a client, it fetches all drivers         `
+        //If user is a driver, it fetches all clients.
+        //If user is neither (like an admin), it fetches both.
         if ($authUserRole === 'client') {
             $users = User::where('role', 'driver')->select('id', 'name')->get();
         } elseif ($authUserRole === 'driver') {
