@@ -1,4 +1,5 @@
- @extends('layouts.template_client')
+@php use App\Models\Driver; @endphp
+-@extends('layouts.template_client')
 
     @section('content')
         <section class="w3l-form-12 close-menu-toggle">
@@ -35,20 +36,10 @@
                                 @error('package_size_l')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                                 @enderror
-                                <label class="form-check-label">
-                                    <input type="checkbox" name="urgency" id="urgency" checked>
-                                    Urgent Delivery
-                                </label>
 
-                                @error('urgency')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                                @enderror
-                                <br>
-                                <label for="driver_id">Choose Driver</label>
-                                <select name="driver_id" class="form-select mb-4" >
-                                    <option value="">-- Select Driver --</option>
 
-                                </select>
+
+
 
 
 
@@ -197,11 +188,16 @@
                                 @error('dropoff_longtitude')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                                 @enderror
-                                </fieldset>
+                        </fieldset>
                                 <!-- Add this DIV inside your Blade view, under the second map (dropoff) -->
                                 <!-- 📌 This should go right after <div id="dropoff-map" class="map-box"></div> -->
+                                <br>
+                                <br>
+                             <!--   <label for="driver_id">Choose Driver</label>
+                                <select name="driver_id" class="form-select mb-4" >
+                                    <option value="">-- Select Driver --</option>
 
-
+                                </select>-->
                                 <button type="submit" class="btn btn-primary btn-style mt-3">Send Request</button>
                             </form>
                             @if ($errors->any())
@@ -229,4 +225,3 @@
             </div>
         </section>
     @endsection
-

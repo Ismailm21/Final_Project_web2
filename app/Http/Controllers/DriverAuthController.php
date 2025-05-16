@@ -109,6 +109,10 @@ class DriverAuthController extends Controller
         $user->notify(new TwoFactorCode());  // Send OTP via email
 
         return redirect()->route('driver.verify.otp');
+
+
+
+
     }
 
     public function storeDriver(Request $request)
