@@ -32,6 +32,11 @@ class DriverAuthController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 'driver'], $request->remember)) {
+
+            $driver = Driver::where('user_id', Auth::id())->first();
+            if($driver->status == 'pending') {
+                return view('driver.PendingDriver');
+            }
             return redirect()->route('driver.Menu');
         }
 
