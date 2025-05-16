@@ -20,9 +20,9 @@
         </a>
         </a>
         <a href="{{route('admin.loyalty')}}" class="flex items-center space-x-2 hover:text-blue-600">
-            <i class="fas fa-user"></i><span>Loyalty Programs</span>
+            <i class="fas fa-award"></i><span>Loyalty Programs</span>
         </a>
-    
+
 
     </nav>
 </aside>

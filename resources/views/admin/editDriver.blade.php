@@ -6,7 +6,7 @@
     <section id="drivers">
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-semibold mb-4">Edit Driver</h2>
-            <form method="POST" action="{{ route('admin.updateDriver', $driver->id) }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <form method="POST" action="{{ route('admin.updateDriver',['id'=>$driver->id]) }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
     @csrf
     @method('PUT')
 
