@@ -83,7 +83,6 @@ Route::post('/driver/verify', [DriverAuthController::class, 'verifyDriverOtp'])-
 
 /*-----------------------------------------DRIVER JULIEN--------------------------------------------*/
 use App\Http\Controllers\DriverMenuController;
-use Laravel\Socialite\Facades\Socialite;
 
 Route::get('driver/driverMenu', [DriverMenuController::class, 'index'])->name('driver.Menu');
 Route::get('driver/myProfile', [DriverMenuController::class, 'myProfile'])->name('driver.myProfile');
@@ -94,6 +93,10 @@ Route::get('driver/cancelledOrders', [DriverMenuController::class, 'cancelledOrd
 Route::get('driver/manageAvailability', [DriverMenuController::class, 'manageAvailability'])->name('driver.manageAvailability');
 Route::get('driver/AreaAndPricing', [DriverMenuController::class, 'AreaAndPricing'])->name('driver.AreaAndPricing');
 Route::get('driver/viewOrderDetails/{id}', [DriverMenuController::class, 'OrderDetails'])->name('driver.viewOrderDetails');
+Route::get('driver/myCalendar', [DriverMenuController::class, 'myCalendar'])->name('driver.myCalendar');
+Route::get('driver/myReviews', [DriverMenuController::class, 'myReviews'])->name('driver.myReviews');
+Route::get('driver/myEarnings', [DriverMenuController::class, 'myEarnings'])->name('driver.myEarnings');
+Route::post('driver/storeFCMtoken', [DriverMenuController::class, 'storeFCMtoken'])->name('storeFCMtoken');
 
 
 Route::put('driver/updateDriverProfile', [DriverController::class, 'updateDriverProfile'])->name('driver.updateDriverProfile');
@@ -102,6 +105,7 @@ Route::put('driver/updateAreaAndPricing', [DriverController::class, 'updateAreaA
 Route::put('driver/updateOrderStatusByDriver', [DriverController::class, 'updateOrderStatusByDriver'])->name('driver.updateOrderStatusByDriver');
 Route::put('driver/updateOrderDeliveryDate', [DriverController::class, 'updateOrderDeliveryDate'])->name('driver.updateOrderDeliveryDate');
 Route::post('driver/updateDriverAvailability', [DriverController::class, 'updateDriverAvailability'])->name('driver.updateDriverAvailability');
+Route::put('driver/acceptPayment', [DriverController::class, 'acceptPayment'])->name('driver.acceptPayment');
 /*--------------------------------------------------------------------------------------------------*/
 
 

@@ -24,7 +24,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             <!-- Pending Orders Card -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" onclick="window.location='{{route('driver.pendingOrders')}}'" style="cursor: pointer;">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-700">Pending Orders</h3>
                     <div class="w-12 h-12 rounded-full border-4 border-red-500 border-dashed flex items-center justify-center animate-pulse-border">
@@ -40,7 +40,7 @@
             </div>
 
             <!-- Processing Orders Card -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" onclick="window.location='{{route('driver.inProcessOrders')}}'" style="cursor: pointer;">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-700">Processing Orders</h3>
                     <div class="w-12 h-12 rounded-full border-4 border-yellow-400 flex items-center justify-center">
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Delivered Orders Card -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" onclick="window.location='{{route('driver.completedOrders')}}'" style="cursor: pointer;">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-700">Delivered Orders</h3>
                     <div class="w-12 h-12 rounded-full border-4 border-green-500 flex items-center justify-center">
@@ -72,7 +72,7 @@
             </div>
 
             <!-- Cancelled Orders Card -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" onclick="window.location='{{route('driver.cancelledOrders')}}'" style="cursor: pointer;">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-700">Cancelled Orders</h3>
                     <div class="w-12 h-12 rounded-full border-4 border-red-500 flex items-center justify-center">
@@ -133,7 +133,7 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium">Pickup Address</p>
-                                    <p class="text-sm text-gray-500">{{ $order->pickupAddress->type . ', ' . $order->pickupAddress->city . ', ' . $order->pickupAddress->state . ', ' . $order->pickupAddress->street . ', ' . ($order->pickupAddress->country ?? 'N/A') }}</p>
+                                    <p class="text-sm text-gray-500">{{$order->pickupAddress->city . ', ' . $order->pickupAddress->state . ', ' . $order->pickupAddress->street . ', ' . ($order->pickupAddress->country ?? 'N/A') }}</p>
                                 </div>
                             </div>
                             
@@ -143,7 +143,7 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium">Dropoff Address</p>
-                                    <p class="text-sm text-gray-500">{{ $order->dropoffAddress->type . ', ' . $order->dropoffAddress->city . ', ' . $order->dropoffAddress->state . ', ' . $order->dropoffAddress->street . ', ' . ($order->dropoffAddress->country ?? 'N/A') }}</p>
+                                    <p class="text-sm text-gray-500">{{$order->dropoffAddress->city . ', ' . $order->dropoffAddress->state . ', ' . $order->dropoffAddress->street . ', ' . ($order->dropoffAddress->country ?? 'N/A') }}</p>
                                 </div>
                             </div>
                         </div>

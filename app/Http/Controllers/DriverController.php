@@ -9,6 +9,7 @@ use App\Models\Driver;
 use App\Models\Order;
 use App\Models\Area;
 use App\Models\Availability;
+use App\Models\Payment;
 
 class DriverController extends Controller
 {
@@ -190,5 +191,18 @@ class DriverController extends Controller
         }
 
         return redirect()->back()->with('success', 'Availability updated successfully.');
+    }
+
+    public function acceptPayment(Request $request){
+        
+        $request->validate([
+            'payment_id' => 'required'
+        ]);
+
+        $payment = Payment::findOrFail($request->payment_id);
+        $payment->status = 'paid';
+        $payment->save();
+
+        return redirect()->back()->with('success', 'Payment accepted successfully.');
     }
 }
