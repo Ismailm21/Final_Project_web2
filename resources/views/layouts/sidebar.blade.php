@@ -15,9 +15,14 @@
         <a href="{{route('admin.driver')}}" class="flex items-center space-x-2 hover:text-blue-600">
             <i class="fas fa-motorcycle"></i><span> Drivers</span>
         </a>
-        <a href="#clients" class="flex items-center space-x-2 hover:text-blue-600">
-            <i class="fas fa-user"></i><span>Clients</span>
+        <a href="{{route('admin.reports')}}" class="flex items-center space-x-2 hover:text-blue-600">
+            <i class="fas fa-user"></i><span>Admin Report</span>
         </a>
+        </a>
+        <a href="{{route('admin.loyalty')}}" class="flex items-center space-x-2 hover:text-blue-600">
+            <i class="fas fa-user"></i><span>Loyalty Programs</span>
+        </a>
+    
 
     </nav>
 </aside>

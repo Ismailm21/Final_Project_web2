@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LoyaltyPoint extends Model
 {   //lilooo
-    protected $fillable = ['client_id', 'points'];
+    protected $fillable = ['client_id', 'points','reward'];
 
     public function client()
     {
