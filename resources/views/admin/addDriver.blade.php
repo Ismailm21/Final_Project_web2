@@ -1,6 +1,6 @@
 @extends('admin.admin')
 
-@section('title', 'Add/Edit Driver')
+@section('title', 'Add Driver')
 
 @section('content')
     <section id="drivers">
@@ -157,24 +157,30 @@
                        class="col-span-2 border p-2 rounded @error('vehicle_number') border-red-500 @enderror"/>
                 @error('vehicle_number') <div class="text-red-600">{{ $message }}</div> @enderror
 
-                <div class="row mb-3 col-span-2">
-                    <label class="form-label fw-bold">Pricing</label>
-                    <div class="flex">
-                        <input type="number"
-                               name="price"
-                               class="border p-2 rounded-l flex-1"
-                               placeholder="0.00"
-                               min="0"
-                               step="0.01"
-                               value="{{ old('price') }}">
-                        <select name="pricing_model" class="border border-l-0 p-2 rounded-r" style="min-width: 120px;">
-                            <option value="fixed" {{ old('pricing_model') == 'fixed' ? 'selected' : '' }}>Fixed</option>
-                            <option value="perKilometer" {{ old('pricing_model') == 'per_km' ? 'selected' : '' }}>Per km</option>
-                        </select>
-                    </div>
-                    @error('price') <div class="text-red-600">{{ $message }}</div> @enderror
-                    @error('pricing_model') <div class="text-red-600">{{ $message }}</div> @enderror
+                <div class="col-span-2 mb-3">
+                <label class="block text-gray-700 mb-2">Pricing</label>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="number"
+                        name="price"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                        value="{{ old('price', $driver->price ?? '') }}"
+                        class="border p-2 rounded w-full @error('price') border-red-500 @enderror" />
+
+                    <select name="pricing_model"
+                            class="border p-2 rounded w-full @error('pricing_model') border-red-500 @enderror">
+                        <option value="">Select Pricing Model</option>
+                        <option value="fixed" {{ old('pricing_model', $driver->pricing_model ?? '') == 'fixed' ? 'selected' : '' }}>Fixed</option>
+                        <option value="perKilometer" {{ old('pricing_model', $driver->pricing_model ?? '') == 'perKilometer' ? 'selected' : '' }}>Per km</option>
+                    </select>
                 </div>
+
+    @error('price') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
+    @error('pricing_model') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
+</div>
+
 
                 <button type="submit" class="col-span-2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Save Driver</button>
             </form>

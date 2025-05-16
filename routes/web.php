@@ -5,9 +5,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DriverAuthController;
+use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\TwoFactorController;
-use App\Http\Controllers\AdminDriverController;
+use App\Http\Controllers\AdminLoyaltyController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -63,23 +64,23 @@ Route::get('/driver/verify', [DriverAuthController::class, 'showDriverOtpForm'])
 Route::post('/driver/verify', [DriverAuthController::class, 'verifyDriverOtp'])->name('driver.verify.otp.submit');
 
 /*----------------------------------------- ADMIN ISMAIL --------------------------------------------*/
-Route::get('admin/list_drivers', [AdminController::class, 'listDrivers'])->name('admin.driver');
 Route::get('admin/add_drivers', [AdminController::class, 'viewForm'])->name('admin.addDriver');
 Route::post('admin/save_drivers', [AdminController::class, 'addDriver'])->name('admin.save');
 Route::post('admin/count_d',[AdminController::class, 'countAvailableDrivers'])->name('admin.count_drivers');
 Route::get('admin/orders-by-day', [AdminController::class, 'ordersByDay'])->name('admin.ordersByDay');
 Route::post('/driver/{id}/accept', [AdminController::class, 'acceptDriver'])->name('admin.acceptDriver');
 Route::post('/driver/{id}/deny', [AdminController::class, 'denyDriver'])->name('admin.denyDriver');
-
+Route::get('admin/orders', [AdminController::class, 'listOrders'])->name('admin.showOrders');
 Route::get('admin/driver{id}', [AdminController::class, 'showDriver'])->name('admin.viewDriver');
+Route::get('admin/orders/{id}', [adminController::class, 'OrderDetails'])->name('admin.showOrderDetails');
+
+
 Route::delete('admin/delete_driver/{id}',[AdminController::class, 'destroyDriver'])->name('admin.deleteDriver');
-Route::get('admin/edit_driver',[AdminController::class, 'editDriver'])->name('admin.editDriver');
-Route::post('admin/update_driver/{id}',[AdminController::class, 'updateDriver'])->name('admin.updateDriver');
+Route::get('admin/edit_driver/{id}', [AdminController::class, 'editDriver'])->name('admin.editDriver');
+Route::put('admin/update_driver/{id}', [AdminController::class, 'updateDriver'])->name('admin.updateDriver');
 
-
-Route::get('admin/orders', [AdminController::class, 'viewOrders'])->name('admin.showOrders');
-Route::get('/admin/reports/filter', [AdminController::class, 'filterReports'])->name('admin.reports.filter');
-
+Route::get('admin/loyalty', [AdminLoyaltyController::class, 'index'])->name('admin.loyalty');
+Route::post('admin/loyalty', [AdminLoyaltyController::class, 'store'])->name('admin.loyalty.store');
 
 /*-----------------------------------------DRIVER JULIEN--------------------------------------------*/
 use App\Http\Controllers\DriverMenuController;
@@ -126,6 +127,6 @@ Route::get('/auth/github/callback', [SocialiteController::class, 'handleGitHubCa
 //Raed trying
 
 Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('admin/reports', [\App\Http\Controllers\ReportController::class, 'reports'])->name('admin.reports');
+    Route::get('admin/reports', [AdminReportController::class, 'reports'])->name('admin.reports');
 
 });
