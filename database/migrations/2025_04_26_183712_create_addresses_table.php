@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('city');
             $table->string('state');
             $table->string('country')->default('Lebanon');
-            $table->string('postal_code');
+            $table->string('postal_code',20);
             $table->decimal('latitude', 10, 8); // Increased precision for coordinates
             $table->decimal('longitude', 10, 8);
             $table->timestamps();

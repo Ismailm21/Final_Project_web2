@@ -40,4 +40,10 @@ class Order extends Model
     {
         return $this->hasOne(Review::class);
     }
+
+
+    public function chats()
+    {
+        return $this->hasMany(chats::class);
+    }
 }
