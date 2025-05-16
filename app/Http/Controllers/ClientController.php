@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\Availability;
@@ -175,6 +176,8 @@ class ClientController extends Controller
 
         $order->driver_id=null;
         $order->save();
+
+
 
 
         return redirect()->route('orders.showAssignDriverForm',['id'=>$order->id]);
