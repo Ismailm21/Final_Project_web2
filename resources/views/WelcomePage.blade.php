@@ -76,7 +76,7 @@
 </head>
 <body>
 
-<img src="{{ asset('storage/Logo2.png.png') }}" alt="Delivery Motorcycle Icon" class="company-icon">
+<img src="{{ asset('storage/Logo2.png') }}" alt="Delivery Motorcycle Icon" class="company-icon">
 
 <h1 class="title">Welcome to QuickDeliver</h1>
 <p class="mb-4 fs-5">Choose your role to get started</p>
