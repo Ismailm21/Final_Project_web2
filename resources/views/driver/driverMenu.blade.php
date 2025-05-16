@@ -5,11 +5,42 @@
 @section('page_title', 'Driver Menu')
 
 @section('page-content')
+    <style>
+        @keyframes pulseBorder {
+            0%, 100% {
+                border-color: transparent;
+            }
+            50% {
+                border-color: lightblue;
+            }
+        }
+        
+        .animate-pulse-border {
+            animation: pulseBorder 1.5s ease-in-out infinite;
+        }
+    </style>
     <div class="space-y-6">
         <!-- Status Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+            <!-- Pending Orders Card -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" onclick="window.location='{{route('driver.pendingOrders')}}'" style="cursor: pointer;">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-700">Pending Orders</h3>
+                    <div class="w-12 h-12 rounded-full border-4 border-red-500 border-dashed flex items-center justify-center animate-pulse-border">
+                        <span class="text-xl font-bold text-gray-700">
+                            @if(isset($pendingCount))
+                                {{ $pendingCount }}
+                            @else
+                                0
+                            @endif
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Processing Orders Card -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" onclick="window.location='{{route('driver.inProcessOrders')}}'" style="cursor: pointer;">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-700">Processing Orders</h3>
                     <div class="w-12 h-12 rounded-full border-4 border-yellow-400 flex items-center justify-center">
@@ -25,7 +56,7 @@
             </div>
 
             <!-- Delivered Orders Card -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" onclick="window.location='{{route('driver.completedOrders')}}'" style="cursor: pointer;">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-700">Delivered Orders</h3>
                     <div class="w-12 h-12 rounded-full border-4 border-green-500 flex items-center justify-center">
@@ -41,7 +72,7 @@
             </div>
 
             <!-- Cancelled Orders Card -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" onclick="window.location='{{route('driver.cancelledOrders')}}'" style="cursor: pointer;">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-medium text-gray-700">Cancelled Orders</h3>
                     <div class="w-12 h-12 rounded-full border-4 border-red-500 flex items-center justify-center">
@@ -68,7 +99,17 @@
                             <div>
                                 <h3 class="text-lg font-semibold">#{{ $order->tracking_code }}</h3>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-sm {{ $order->status === 'processing' ? 'bg-yellow-100 text-yellow-800' : ($order->status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
+                            <span class="px-3 py-1 rounded-full text-sm
+                                @if($order->status === 'pending')
+                                   bg-blue-100 text-blue-900 animate-pulse border-4 border-blue-400 border-dotted
+                                @elseif($order->status === 'processing')
+                                    bg-yellow-100 text-yellow-800
+                                @elseif($order->status === 'completed')
+                                    bg-green-100 text-green-800
+                                @else
+                                    bg-red-100 text-red-800
+                                @endif
+                            ">
                                 {{ ucfirst($order->status) }}
                             </span>
                         </div>
@@ -92,7 +133,7 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium">Pickup Address</p>
-                                    <p class="text-sm text-gray-500">{{ $order->pickupAddress->type . ', ' . $order->pickupAddress->city . ', ' . $order->pickupAddress->state . ', ' . $order->pickupAddress->street . ', ' . ($order->pickupAddress->country ?? 'N/A') }}</p>
+                                    <p class="text-sm text-gray-500">{{$order->pickupAddress->city . ', ' . $order->pickupAddress->state . ', ' . $order->pickupAddress->street . ', ' . ($order->pickupAddress->country ?? 'N/A') }}</p>
                                 </div>
                             </div>
                             
@@ -102,7 +143,7 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium">Dropoff Address</p>
-                                    <p class="text-sm text-gray-500">{{ $order->dropoffAddress->type . ', ' . $order->dropoffAddress->city . ', ' . $order->dropoffAddress->state . ', ' . $order->dropoffAddress->street . ', ' . ($order->dropoffAddress->country ?? 'N/A') }}</p>
+                                    <p class="text-sm text-gray-500">{{$order->dropoffAddress->city . ', ' . $order->dropoffAddress->state . ', ' . $order->dropoffAddress->street . ', ' . ($order->dropoffAddress->country ?? 'N/A') }}</p>
                                 </div>
                             </div>
                         </div>
