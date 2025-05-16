@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
+use Google\Client as GoogleClient;
+use Illuminate\Support\Facades\Storage;
 class OrderController extends Controller
 {
 
@@ -46,6 +49,68 @@ class OrderController extends Controller
             'driver_id' => $nearestDriver->id
         ]);
         $order->save();
+
+
+
+        $user = User::find($nearestDriver->id); //get the user by driverId
+        $fcm = $user->FCM_token;
+        if (!$fcm) {
+
+            return response()->json(['message' => 'User does not have a device token'], 400);
+
+        }
+        $title = "New Order Alert";
+        $description = "You have a new order! Please check your pending orders.";
+        $projectId = "quickdeliver-709e2";
+        $credentialsFilePath = Storage::path('/file.json');
+        if (!file_exists($credentialsFilePath)) {
+            return response()->json(['message' => 'Credentials file not found'], 404);
+
+        }
+        $client = new GoogleClient();
+        $client->setAuthConfig($credentialsFilePath);
+        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+        $token = $client->fetchAccessTokenWithAssertion();
+        $access_token = $token['access_token'];
+        $headers = [
+            "Authorization: Bearer $access_token",
+            'Content-Type: application/json'
+        ];
+        $data = [
+            "message" => [
+                "token" => $fcm,
+                "notification" => [
+                    "title" => $title,
+                    "body" => $description,
+                ],
+                "webpush" => [
+                    "fcm_options" => [
+                        "link" => route('driver.pendingOrders') //The driver will be redirected to this link
+                    ],
+                    "notification" => [
+                        "click_action" => route('driver.pendingOrders') // The driver will be redirected to this link
+                    ]
+                ],
+                "data" => [
+                    "route_name" => "driver.pendingOrders" // The driver will be redirected to this link
+
+                ]
+            ]
+        ];
+        $payload = json_encode($data);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_VERBOSE, true); // Enable verbose output for debugging
+        $response = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+
 
         /*return response()->json([
             'message' => 'Driver auto-assigned successfully.',

@@ -81,7 +81,9 @@
             <a href="{{route("driver.myReviews")}}" class="flex items-center space-x-2 hover:text-blue-600">
                 <i class="fas fa-star"></i><span>My Reviews</span>
             </a>
-
+            <a href="{{route("chats")}}" class="flex items-center space-x-2 hover:text-blue-600">
+                <i class="fas fa-calendar-alt"></i><span>Chats</span>
+            </a>
         </nav>
     </aside>
 
@@ -91,6 +93,7 @@
             <div class="flex items-center space-x-4">
                 <a href="{{route("driver.logout")}}" class="text-red-600 hover:text-red-800">Logout</a>
             </div>
+
         </header>
 
         <div class="bg-white shadow-lg rounded-lg p-6">
