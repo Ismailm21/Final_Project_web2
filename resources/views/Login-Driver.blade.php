@@ -80,6 +80,13 @@
 
 <h1 class="title">Driver Login</h1>
 
+@if ($errors->has('access'))
+    <div class="alert alert-danger">
+        {{ $errors->first('access') }}
+    </div>
+@endif
+
+
 <div class="form-container">
     <form method="POST" action="{{ route('driver.login.submit') }}">
         @csrf

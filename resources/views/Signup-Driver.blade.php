@@ -148,11 +148,28 @@
 
                 <div class="mb-3">
                     <label for="pricing_model" class="form-label">Pricing Model</label>
-                    <select id="pricing_model" name="pricing_model" class="form-select" required>
+                    <select name="pricing_model" id="pricing_model" class="form-select" required onchange="toggleRateFields()">
+                        <option value="">Select Pricing Model</option>
                         <option value="fixed">Fixed</option>
-                        <option value="perKilometer">Per Kilometer</option>
+                        <option value="perKilometer">Per KM</option>
                     </select>
                     @error('pricing_model') <div class="text-danger">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="mb-3" id="fixed_rate_div" style="display:none;">
+                    <label for="fixed_rate" class="form-label">Fixed Rate</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" name="fixed_rate" class="form-control" step="0.01" min="0" placeholder="Enter fixed rate">
+                    </div>
+                </div>
+
+                <div class="mb-3" id="rate_per_km_div" style="display:none;">
+                    <label for="rate_per_km" class="form-label">Rate per KM</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" name="rate_per_km" class="form-control" step="0.01" min="0" placeholder="Enter rate per KM">
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -239,6 +256,12 @@
     }
 
     window.initMap = initMap;
+
+    function toggleRateFields() {
+        const model = document.getElementById('pricing_model').value;
+        document.getElementById('fixed_rate_div').style.display = model === 'fixed' ? 'block' : 'none';
+        document.getElementById('rate_per_km_div').style.display = model === 'perKilometer' ? 'block' : 'none';
+    }
 </script>
 
 </body>
