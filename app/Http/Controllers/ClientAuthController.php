@@ -10,14 +10,12 @@ use App\Models\User;
 use App\Notifications\TwoFactorCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class ClientAuthController extends Controller
 {
-
-
-
 
     public function showLoginForm()
     {
@@ -41,61 +39,48 @@ class ClientAuthController extends Controller
         return back()->withErrors(['email' => 'Invalid credentials']);
         }
 
-
-
-
     // Show signup form
     public function showSignUpForm()
     {
-        $loyaltyPoints = LoyaltyPoint::all();  // Get all available loyalty points
-        return view('Signup-Client', compact('loyaltyPoints'));
+        return view('Signup-Client');
     }
 
-    // Handle signup submission
     public function signUp(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-
-
         ]);
 
+        // Use a transaction to ensure atomicity
+        DB::transaction(function () use ($validated) {
+            // Create the user
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'client',
+                'is_verified' => false,
+            ]);
 
-        $user = new User();
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
+            // Generate OTP
+            $user->generateOtpCode();
+            session(['user_id' => $user->id]);
+            $user->notify(new TwoFactorCode());
 
-        $user->password = Hash::make($validated['password']);
-        $user->role = 'client';
+            // Create the client record
+            $client = Client::create(['user_id' => $user->id]);
 
+            // Create the loyalty points record automatically
+            LoyaltyPoint::create([
+                'client_id' => $client->id,
+                'points' => 0,
+                'reward' => 'None',
+            ]);
+        });
 
-        $user->is_verified = false;
-        $user->save();
-        $user = User::where('email', $validated['email'])->first();
-        $user->generateOtpCode();
-        session(['user_id' => $user->id]);
-
-        $user->notify(new TwoFactorCode());
-
-        // Create the Client record
-        $client = new Client();
-        $client->user_id = $user->id;
-
-        $client->save();
-
-
-
-        return view('OtpView', ['user_id' => $user->id]);
-
-
-
-
-
-
-
-
+        return view('OtpView', ['user_id' => session('user_id')]);
     }
 
     public function showOtpForm(Request $request)
@@ -135,18 +120,11 @@ class ClientAuthController extends Controller
 
             auth()->login($user);
 
-            return "welcome";}
+            return 'welcome';}
 
         // OTP is incorrect
         return redirect()->route('client.signup')->withErrors(['otp_code' => 'Invalid OTP. Please try again.']);
     }
-
-
-
-
-
-
-
 
 }
 

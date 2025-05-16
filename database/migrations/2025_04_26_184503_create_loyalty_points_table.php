@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loyaltyPoints', function (Blueprint $table) {
+        Schema::create('loyalty_points', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
-            $table->integer('points')->unsigned();
+            $table->integer('points')->nullable();
+            $table->string('reward')->nullable();
             $table->timestamps();
         });
-
     }
 
     /**
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('loyaltyPoints');
+        Schema::dropIfExists('loyalty_points');
     }
 };
